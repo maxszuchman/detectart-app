@@ -6,6 +6,8 @@ dependencies {
     implementation libraries.support_v4
     implementation libraries.appcompat_v7
     implementation libraries.design_support
+    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'com.squareup.okhttp3:okhttp:3.4.1'
 }
 
 android {

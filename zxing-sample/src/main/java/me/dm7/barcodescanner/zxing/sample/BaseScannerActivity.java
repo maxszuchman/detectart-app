@@ -13,6 +13,7 @@ public class BaseScannerActivity extends AppCompatActivity {
         if(ab != null) {
             ab.setDisplayHomeAsUpEnabled(true);
         }
+        ab.setTitle(R.string.enfoque_el_codigo_qr);
     }
 
     @Override
