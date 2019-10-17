@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SingInGoogle</string>
+    <string name="splash_screen"></string>
+    <!--<string name="web_client_id">617260362500-5294gngn0co33hgpjenqf26h6ck5g2da.apps.googleusercontent.com</string>-->
+</resources>
