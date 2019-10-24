@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_dispositivos"
+        android:icon="@drawable/ic_router_black_24dp"
+        android:title="@string/nav_dispositivos" />
+
+    <item
+        android:id="@+id/navigation_contactos"
+        android:icon="@drawable/ic_people_black_24dp"
+        android:title="@string/nav_contactos" />
+
+    <item
+        android:id="@+id/navigation_logout"
+        android:icon="@drawable/ic_logout"
+        android:title="@string/nav_logout" />
+
+</menu>

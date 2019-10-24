@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">DetectART</string>
+
+    <string name="splash_screen">DetectART</string>
+    <string name="nav_contactos">Contactos</string>
+    <string name="nav_dispositivos">Dispositivos</string>
+    <string name="nav_logout">Cerrar sesión</string>
+    <string name="navigation">Navigation</string>
+    <string name="add_dispositivo">Agregar dispositivo</string>
+
+    <string name="dialog_confirmacion">¿Desea confirmar cerrar sesión?</string>
+    <string name="dialog_ok">Confirmar</string>
+    <string name="dialog_cancel">Cancelar</string>
+
+    <string name="web_client_id">839866701860-3glummjo59vpo7344d3m2i08jq203l4o.apps.googleusercontent.com</string>
+</resources>

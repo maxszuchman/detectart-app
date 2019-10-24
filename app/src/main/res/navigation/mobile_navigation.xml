@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_dispositivos">
+
+    <fragment
+        android:id="@+id/navigation_contactos"
+        android:name="com.experta.ui.contactos.ContactosFragment"
+        android:label="@string/nav_contactos"
+        tools:layout="@layout/fragment_contactos" />
+
+    <fragment
+        android:id="@+id/navigation_dispositivos"
+        android:name="com.experta.ui.dispositivos.DispositivosFragment"
+        android:label="@string/nav_dispositivos"
+        tools:layout="@layout/fragment_dispositivos" />
+
+    <fragment
+        android:id="@+id/navigation_logout"
+        android:label="@string/nav_logout"
+        android:name="com.experta.ui.LogoutFragment"/>
+</navigation>
