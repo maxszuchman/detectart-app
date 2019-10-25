@@ -14,4 +14,22 @@
 
     <string name="web_client_id">839866701860-3glummjo59vpo7344d3m2i08jq203l4o.apps.googleusercontent.com</string>
     <string name="bienvenidoa">Bienvenido/a</string>
+
+    <!--    QR SCANNER    -->
+    <bool name="cameraPreviewShouldFillView">true</bool>
+    <string name="enfoque_el_codigo_qr">Enfoque el código QR</string>
+    <string name="codigo_qr_incorrecto">Codigo QR incorrecto.</string>
+    <string name="password">Password</string>
+    <string name="enviar_al_dispositivo">Enviar al dispositivo</string>
+    <string name="ingrese_contra">Por favor ingrese una contraseña</string>
+    <string name="habilitando_wifi">Habilitando WiFi...</string>
+    <string name="escaneando_redes">Escaneando redes WiFi disponibles...</string>
+    <string name="no_hay_redes_disponibles">No hay redes WiFi disponibles.</string>
+    <string name="seleccione_red">Por favor seleccione una red a la que conectar el dispositivo.</string>
+    <string name="enviando_datos_de_conexion">Enviando datos de conexión al dispositivo.</string>
+    <string name="conectando_al_dispositivo">Conectando al dispositivo...</string>
+    <string name="enviando_datos_al_dispositivo">Enviando datos al dispositivo...</string>
+    <string name="conectado_al_dispositivo">Conectado al dispositivo</string>
+    <string name="datos_enviados_correctamente">Datos enviados correctamente.</string>
+    <string name="permisos_camara">Se requieren permisos para la cámara en ésta aplicación.</string>
 </resources>

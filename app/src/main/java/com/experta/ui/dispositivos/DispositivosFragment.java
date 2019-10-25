@@ -1,5 +1,6 @@
 package com.experta.ui.dispositivos;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.experta.QRScanner.SimpleScannerActivity;
 import com.experta.R;
 import com.experta.com.experta.model.Device;
 import com.experta.services.ToastService;
@@ -63,10 +65,12 @@ public class DispositivosFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.add_dispositivo:
-                // Llama a la actividad add dispositivo
+
+        if (item.getItemId() == R.id.add_dispositivo) {
+            Intent intent = new Intent(getContext(), SimpleScannerActivity.class);
+            startActivity(intent);
         }
+
         return super.onOptionsItemSelected(item);
     }
 

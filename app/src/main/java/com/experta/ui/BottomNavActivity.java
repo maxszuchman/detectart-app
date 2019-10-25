@@ -12,14 +12,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.experta.R;
-import com.experta.com.experta.model.Contact;
 import com.experta.com.experta.model.User;
 import com.experta.services.ToastService;
 import com.experta.utilities.NetworkUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.io.IOException;
 
 public class BottomNavActivity extends AppCompatActivity {
 

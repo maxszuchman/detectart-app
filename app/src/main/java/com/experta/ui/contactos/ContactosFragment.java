@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment;
 
 import com.experta.R;
 import com.experta.com.experta.model.Contact;
-import com.experta.com.experta.model.Device;
 import com.experta.services.ToastService;
 import com.experta.ui.BottomNavActivity;
 import com.experta.ui.adapters.ContactAdapter;
