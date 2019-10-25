@@ -78,7 +78,7 @@ public class SignInActivity extends Activity {
         super.onStart();
         GoogleSignInAccount alreadyloggedAccount = GoogleSignIn.getLastSignedInAccount(this);
         if (alreadyloggedAccount != null) {
-            Toast.makeText(this, "Already Logged In", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "Already Logged In", Toast.LENGTH_SHORT).show();
             onLoggedIn(alreadyloggedAccount);
         } else {
             Log.d(TAG, "Not logged in");
