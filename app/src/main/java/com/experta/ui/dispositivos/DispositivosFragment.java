@@ -38,7 +38,7 @@ public class DispositivosFragment extends Fragment {
         setHasOptionsMenu(true);
 
         GetDevicesTask getDevicesTask = new GetDevicesTask();
-        getDevicesTask.execute(BottomNavActivity.userEmail);
+        getDevicesTask.execute(BottomNavActivity.user.getId());
 
         adapter = new DeviceAdapter(getContext(), devices);
         lstDevices = root.findViewById(R.id.LstDevices);
@@ -104,7 +104,7 @@ public class DispositivosFragment extends Fragment {
         }
 
         // Lo hacemos asi porque porque adapter.notifyDataSetChanged() no anda
-        adapter = new DeviceAdapter(getContext(), devices);
+        adapter = new DeviceAdapter(getContext(), devices != null? devices : new Device[]{});
         lstDevices.setAdapter(adapter);
     }
 }

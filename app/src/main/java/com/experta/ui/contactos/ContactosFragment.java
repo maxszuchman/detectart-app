@@ -35,7 +35,7 @@ public class ContactosFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_contactos, container, false);
 
         GetContactsTask getContactsTask = new GetContactsTask();
-        getContactsTask.execute(BottomNavActivity.userEmail);
+        getContactsTask.execute(BottomNavActivity.user.getId());
 
         adapter = new ContactAdapter(getContext(), contacts);
         lstContacts = root.findViewById(R.id.LstDevices);

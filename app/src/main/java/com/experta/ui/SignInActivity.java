@@ -3,6 +3,7 @@ package com.experta.ui;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -17,7 +18,10 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
 public class SignInActivity extends Activity {
-    private static final String TAG = "AndroidClarified";
+
+    private static final String TAG = "SignInActivity";
+    private static int SPLASH_TIME_OUT = 3000;
+
     private GoogleSignInClient googleSignInClient;
     private SignInButton googleSignInButton;
 
@@ -26,10 +30,26 @@ public class SignInActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        new Handler().postDelayed(new Runnable() {
 
+            @Override
+            public void run() {
+                GoogleSignInAccount alreadyloggedAccount = GoogleSignIn.getLastSignedInAccount(getApplicationContext());
+
+                if (alreadyloggedAccount != null) {
+                    onLoggedIn(alreadyloggedAccount);
+                } else {
+                    loadAndShowGoogleButton();
+                }
+
+            }
+        }, SPLASH_TIME_OUT);
+    }
+
+    private void loadAndShowGoogleButton() {
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                                                         .requestEmail()
-                                                         .build();
+                .requestEmail()
+                .build();
 
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
@@ -38,11 +58,13 @@ public class SignInActivity extends Activity {
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //validar si tengo internet aca tener un try por si no hay...
+                // TODO validar si tengo internet aca tener un try por si no hay...
                 Intent signInIntent = googleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, 101);
             }
         });
+
+        googleSignInButton.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -76,12 +98,5 @@ public class SignInActivity extends Activity {
     @Override
     public void onStart() {
         super.onStart();
-        GoogleSignInAccount alreadyloggedAccount = GoogleSignIn.getLastSignedInAccount(this);
-        if (alreadyloggedAccount != null) {
-//            Toast.makeText(this, "Already Logged In", Toast.LENGTH_SHORT).show();
-            onLoggedIn(alreadyloggedAccount);
-        } else {
-            Log.d(TAG, "Not logged in");
-        }
     }
 }

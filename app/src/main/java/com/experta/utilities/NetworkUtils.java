@@ -4,11 +4,18 @@ import android.util.Log;
 
 import com.experta.com.experta.model.Contact;
 import com.experta.com.experta.model.Device;
+import com.experta.com.experta.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -21,11 +28,61 @@ public class NetworkUtils {
     public static final String DEVICES = "/devices";
     public static final String CONTACTS = "/contacts";
 
-    public static Device[] getDeviceListFromServer(String userEmail) throws IOException {
+    public static boolean createUser(User user) {
 
-        String jsonString = null;
+        Response response;
 
-        URL url = new URL(SERVER_BASE_URL + USERS + userEmail + DEVICES);
+        try {
+            URL url = new URL(SERVER_BASE_URL + USERS);
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), user.jsonString());
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).method("POST", body).build();
+
+            response = client.newCall(request).execute();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+
+        if (response != null && response.isSuccessful()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean doesUserExist(String userEmail) {
+
+        Response response;
+
+        try {
+            URL url = new URL(SERVER_BASE_URL + USERS + userEmail);
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).build();
+
+            response = client.newCall(request).execute();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+
+        if (response != null && response.isSuccessful()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static String getDataFromServer(URL url) throws IOException {
+
+        String data = "";
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
         try {
@@ -36,12 +93,20 @@ public class NetworkUtils {
 
             boolean hasInput = scanner.hasNext();
             if (hasInput) {
-                jsonString = scanner.next();
+                data = scanner.next();
             }
 
         } finally {
             urlConnection.disconnect();
         }
+
+        return data;
+    }
+
+    public static Device[] getDeviceListFromServer(String userEmail) throws IOException {
+
+        URL url = new URL(SERVER_BASE_URL + USERS + userEmail + DEVICES);
+        String jsonString = getDataFromServer(url);
 
         Log.i(LOGTAG, jsonString);
 
@@ -69,25 +134,8 @@ public class NetworkUtils {
 
     public static Contact[] getContactListFromServer(String userEmail) throws IOException {
 
-        String jsonString = null;
-
         URL url = new URL(SERVER_BASE_URL + USERS + userEmail + CONTACTS);
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-
-        try {
-            InputStream in = urlConnection.getInputStream();
-
-            Scanner scanner = new Scanner(in);
-            scanner.useDelimiter("\\A");
-
-            boolean hasInput = scanner.hasNext();
-            if (hasInput) {
-                jsonString = scanner.next();
-            }
-
-        } finally {
-            urlConnection.disconnect();
-        }
+        String jsonString = getDataFromServer(url);
 
         Log.i(LOGTAG, jsonString);
 

@@ -8,15 +8,14 @@
 
     <ImageView
         android:id="@+id/logo_text"
-        android:layout_width="323dp"
-        android:layout_height="113dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:contentDescription="@string/app_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.251"
-        android:background="@drawable/logo_text" />
+        android:src="@drawable/logo_text" />
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
@@ -25,8 +24,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.514" />
+        app:layout_constraintTop_toBottomOf="@+id/logo_text"
+        app:layout_constraintVertical_bias="0.278"
+        android:visibility="invisible"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
