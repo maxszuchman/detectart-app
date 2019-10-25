@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.experta.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -21,7 +23,6 @@ public class LogoutFragment extends Fragment {
     GoogleSignInAccount user;
 
     private GoogleSignInClient googleSignInClient;
-
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.blank_fragment, container, false);

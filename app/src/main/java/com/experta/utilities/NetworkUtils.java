@@ -2,6 +2,7 @@ package com.experta.utilities;
 
 import android.util.Log;
 
+import com.experta.com.experta.model.Contact;
 import com.experta.com.experta.model.Device;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,6 +19,7 @@ public class NetworkUtils {
     public static final String SERVER_BASE_URL = "https://still-shelf-00010.herokuapp.com/";
     public static final String USERS = "/users/";
     public static final String DEVICES = "/devices";
+    public static final String CONTACTS = "/contacts";
 
     public static Device[] getDeviceListFromServer(String userEmail) throws IOException {
 
@@ -64,4 +66,51 @@ public class NetworkUtils {
 
         return devices;
     }
+
+    public static Contact[] getContactListFromServer(String userEmail) throws IOException {
+
+        String jsonString = null;
+
+        URL url = new URL(SERVER_BASE_URL + USERS + userEmail + CONTACTS);
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+        try {
+            InputStream in = urlConnection.getInputStream();
+
+            Scanner scanner = new Scanner(in);
+            scanner.useDelimiter("\\A");
+
+            boolean hasInput = scanner.hasNext();
+            if (hasInput) {
+                jsonString = scanner.next();
+            }
+
+        } finally {
+            urlConnection.disconnect();
+        }
+
+        Log.i(LOGTAG, jsonString);
+
+        return jsonStringAsContactArray(jsonString);
+    }
+
+    private static Contact[] jsonStringAsContactArray(String jsonString) {
+
+        if (jsonString == null || jsonString.isEmpty()) {
+            return new Contact[] {};
+        }
+
+        Contact[] contacts = null;
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            contacts = mapper.readValue(jsonString, Contact[].class);
+        } catch (IOException e) {
+            // JSON MALFORMADO
+            e.printStackTrace();
+        }
+
+        return contacts;
+    }
+
 }

@@ -21,8 +21,6 @@ public class BottomNavActivity extends AppCompatActivity {
 
     public static String userEmail, userDisplayName;
 
-    private Device[] devices = new Device[] {};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
