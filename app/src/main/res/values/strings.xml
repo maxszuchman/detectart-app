@@ -6,9 +6,9 @@
     <string name="nav_dispositivos">Dispositivos</string>
     <string name="nav_logout">Cerrar sesión</string>
     <string name="navigation">Navigation</string>
-    <string name="add_dispositivo">Agregar dispositivo</string>
+    <string name="add_dispositivo">Nuevo dispositivo</string>
 
-    <string name="dialog_confirmacion">¿Desea confirmar cerrar sesión?</string>
+    <string name="dialog_confirmacion">¿Confirma cerrar sesión?</string>
     <string name="dialog_ok">Confirmar</string>
     <string name="dialog_cancel">Cancelar</string>
 
@@ -32,4 +32,8 @@
     <string name="conectado_al_dispositivo">Conectado al dispositivo</string>
     <string name="datos_enviados_correctamente">Datos enviados correctamente.</string>
     <string name="permisos_camara">Se requieren permisos para la cámara en ésta aplicación.</string>
+    <string name="nuevo_contacto">Nuevo Contacto</string>
+    <string name="no_pudo_crear_contacto">No se pudo agregar el contacto, por favor reintente.</string>
+    <string name="borrar_contacto">¿Desea borrar el contacto de la lista de emergencia?</string>
+    <string name="no_pudo_borrar_contacto">No se pudo borrar el contacto de la lista de emergencia, por favor reintente.</string>
 </resources>

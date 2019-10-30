@@ -59,8 +59,8 @@ public class DispositivosFragment extends Fragment {
 
     @Override
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        inflater.inflate(R.menu.add_dispositivo, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.add_dispositivo, menu);
     }
 
     @Override

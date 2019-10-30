@@ -161,4 +161,55 @@ public class NetworkUtils {
         return contacts;
     }
 
+    public static boolean addContactForUser(User user, Contact contact) {
+        Response response;
+
+        try {
+            URL url = new URL(SERVER_BASE_URL + USERS + user.getId() + CONTACTS);
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), contact.jsonString());
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).method("POST", body).build();
+
+            response = client.newCall(request).execute();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+
+        if (response != null && response.isSuccessful()) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public static boolean deleteContactByUser(User user, Contact contact) {
+        Response response;
+
+        try {
+            URL url = new URL(SERVER_BASE_URL + USERS + user.getId() + CONTACTS + "/" + contact.getId());
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), contact.jsonString());
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).method("DELETE", body).build();
+
+            response = client.newCall(request).execute();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            return false;
+        }
+
+        if (response != null && response.isSuccessful()) {
+            return true;
+        }
+
+        return false;
+    }
 }
