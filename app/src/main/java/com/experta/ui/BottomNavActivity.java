@@ -6,7 +6,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -49,7 +48,9 @@ public class BottomNavActivity extends AppCompatActivity {
         CheckIfUserExistsCreateItOtherwise ciuecio = new CheckIfUserExistsCreateItOtherwise();
         ciuecio.execute(user);
 
-        ToastService.toast(this, getString(R.string.bienvenidoa) + " " + user.getFullName(), Toast.LENGTH_SHORT);
+        ToastService.toast(this
+                            , getString(R.string.bienvenidoa) + " " + (user.getFullName() == null || user.getFullName().isEmpty()? user.getId() : user.getFullName())
+                            , Toast.LENGTH_SHORT);
     }
 
     private void populateUserData() {
@@ -60,10 +61,10 @@ public class BottomNavActivity extends AppCompatActivity {
         user = new User(googleSignInAccount.getEmail(), googleSignInAccount.getDisplayName(), "");
     }
 
-    public class CheckIfUserExistsCreateItOtherwise extends AsyncTask<User, Void, Void> {
+    public class CheckIfUserExistsCreateItOtherwise extends AsyncTask<User, Void, Boolean> {
 
         @Override
-        protected Void doInBackground(User... params) {
+        protected Boolean doInBackground(User... params) {
 
             Log.i(LOGTAG, "doInBackground");
 
@@ -76,15 +77,24 @@ public class BottomNavActivity extends AppCompatActivity {
                 } else {
 
                     Log.i(LOGTAG, "Unable to create user.");
-                    ToastService.toast(getApplicationContext(), "No se pudo crear el usuario, por favor reintente.", Toast.LENGTH_LONG);
-                    finish();
+
+                    return false;
                 }
 
             } else {
                 Log.i(LOGTAG, "Existent user.");
             }
 
-            return null;
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean couldCreateUser) {
+
+            if (!couldCreateUser) {
+                ToastService.toast(getApplicationContext(), getString(R.string.no_pudo_crear_usuario), Toast.LENGTH_LONG);
+            }
+
         }
 
     }

@@ -24,10 +24,10 @@ public class ContactAdapter extends ArrayAdapter<Contact> {
         View item = inflater.inflate(R.layout.lstitem_contact, null);
 
         TextView lblFullName = (TextView)item.findViewById(R.id.lblFullName);
-        lblFullName.setText(contacts[position].getFullName());
+        lblFullName.setText(contacts[position].getFullName().trim());
 
         TextView lblPhone = (TextView)item.findViewById(R.id.lblPhone);
-        lblPhone.setText(contacts[position].getPhone());
+        lblPhone.setText(contacts[position].getPhone().trim());
 
         return item;
     }

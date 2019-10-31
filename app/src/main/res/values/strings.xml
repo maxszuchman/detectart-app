@@ -36,4 +36,9 @@
     <string name="no_pudo_crear_contacto">No se pudo agregar el contacto, por favor reintente.</string>
     <string name="borrar_contacto">¿Desea borrar el contacto de la lista de emergencia?</string>
     <string name="no_pudo_borrar_contacto">No se pudo borrar el contacto de la lista de emergencia, por favor reintente.</string>
+    <string name="no_pudo_crear_usuario">No se pudo crear el usuario, por favor reintente.</string>
+    <string name="alias_para_el_dispositivo">Alias para el dispositivo</string>
+    <string name="alias_del_dispositivo">Alias del dispositivo</string>
+    <string name="aceptar">Aceptar</string>
+    <string name="ingrese_alias">Por favor ingrese un alias.</string>
 </resources>

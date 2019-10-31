@@ -154,6 +154,16 @@ public class ContactosFragment extends Fragment {
 
             int column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER);
             String phoneNumber = cursor.getString(column);
+
+            if (phoneNumber == null || phoneNumber.isEmpty()) {
+                column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                phoneNumber = cursor.getString(column);
+
+                if (phoneNumber == null || phoneNumber.isEmpty()) {
+                    return;
+                }
+            }
+
             column = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Identity.DISPLAY_NAME);
             String displayName = cursor.getString(column);
             String firstName = namesService.getFirstNameFromDisplayName(displayName);

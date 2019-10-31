@@ -3,6 +3,7 @@ package com.experta.QRScanner;
 import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -25,9 +26,14 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 
 import com.experta.R;
+import com.experta.com.experta.model.Contact;
+import com.experta.ui.dialogs.AliasDialog;
+import com.experta.utilities.NetworkUtils;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -43,7 +49,7 @@ import okhttp3.Response;
 
 public class WifiChooser extends AppCompatActivity implements View.OnClickListener {
 
-    private final String TAG = this.getClass().getSimpleName();
+    private final String LOGTAG = this.getClass().getSimpleName();
 
     private WifiManager wifiManager;
 
@@ -53,7 +59,8 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
     private EditText passwordET;
     private String password;
 
-    private String deviceSSID = "", devicePassword = "";
+    private String deviceSSID = "", devicePassword = "", deviceAlias = null, deviceMacAddress = null;
+    private boolean deviceAttached = false;
 
     private List<String> ssids;
     private String selectedSSID = "";
@@ -75,14 +82,14 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 
                 List<ScanResult> results = filterOnlyChannelZero(scanResults);
 
-                Log.i(TAG, "Se encontraron " + results.size() + " redes disponibles.");
+                Log.i(LOGTAG, "Se encontraron " + results.size() + " redes disponibles.");
 
                 for (ScanResult result : results) {
-                    Log.i(TAG, "\n" + result.toString());
+                    Log.i(LOGTAG, "\n" + result.toString());
                     ssids.add(result.SSID);
                 }
 
-                Log.i(TAG, "ssids cargados");
+                Log.i(LOGTAG, "ssids cargados");
                 adaptador.notifyDataSetChanged();
 
                 unregisterReceiver(mWifiScanReceiver);
@@ -123,17 +130,22 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
                 WifiInfo currentWifiInfo = wifiManager.getConnectionInfo();
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 
-                // Chequeamos conexión y que se haya elegido una red wifi
+                // Chequeamos conexión al dispositivo y que se haya elegido una red wifi
                 if (currentWifiInfo.getSSID().contains(deviceSSID)
                     && info.isConnected()
                     && !TextUtils.isEmpty(selectedSSID)) {
 
                     toast(getString(R.string.conectando_al_dispositivo), Toast.LENGTH_SHORT);
-                    Log.i(TAG, "Conectado al dispositivo");
+                    Log.i(LOGTAG, "Conectado al dispositivo");
+
+                    // Tomamos la mac del dispositivo para vincularla con un usuario en el servidor
+                    deviceMacAddress = currentWifiInfo.getMacAddress();
 
                     sendData();
-                }
+                } else if (!deviceAttached && deviceMacAddress != null) {
 
+                    new AttachDeviceTask().execute(deviceMacAddress);
+                }
             }
         }
     };
@@ -213,7 +225,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
     @Override
     public void onClick(View v) {
 
-        Log.i(TAG, "onClick()");
+        Log.i(LOGTAG, "onClick()");
 
         if (TextUtils.isEmpty(selectedSSID)) {
             toast(getString(R.string.seleccione_red), Toast.LENGTH_SHORT);
@@ -229,12 +241,16 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 //        Toast.makeText(this, "SSID: " + selectedSSID + "\nPWD: " + password, Toast.LENGTH_LONG).show();
         ///////////////////////////////////
 
-        sendConnectionDataToDevice();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        final AliasDialog aliasDialog = new AliasDialog(this);
+        aliasDialog.show(fragmentManager, "tagAlerta");
+
+//        sendConnectionDataToDevice();
     }
 
-    private void sendConnectionDataToDevice() {
+    public void sendConnectionDataToDevice() {
 
-        Log.i(TAG, "sendConnectionDataToDevice()");
+        Log.i(LOGTAG, "sendConnectionDataToDevice()");
 
         // Tomamos la información de la conexión actual, para reconectar luego de pasar los datos
         WifiInfo wifiInfo = wifiManager.getConnectionInfo();
@@ -296,12 +312,12 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
         protected void onPreExecute() {
             super.onPreExecute();
 //            mLoadingIndicator.setVisibility(View.VISIBLE);
-            Log.i(TAG, "onPreExecute()");
+            Log.i(LOGTAG, "onPreExecute()");
         }
 
         @Override
         protected Boolean doInBackground(URL... params) {
-            Log.i(TAG, "doInBackground()");
+            Log.i(LOGTAG, "doInBackground()");
 
             URL url = params[0];
 
@@ -332,7 +348,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 
         @Override
         protected void onPostExecute(Boolean result) {
-            Log.i(TAG, "onPostExecute()");
+            Log.i(LOGTAG, "onPostExecute()");
 
             if (result) {
                 toast(getString(R.string.datos_enviados_correctamente), Toast.LENGTH_SHORT);
@@ -348,6 +364,36 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 //                showErrorMessage();
 //            }
         }
+    }
+
+    public class AttachDeviceTask extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            Log.i(LOGTAG, "doInBackground");
+
+            try {
+                NetworkUtils.getContactListFromServer(params[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean devAttachedCorrectly) {
+            Log.i(LOGTAG, "onPostExecute");
+
+            deviceAttached = devAttachedCorrectly;
+        }
+    }
+
+    public void setDeviceAlias(String deviceAlias) {
+        this.deviceAlias = deviceAlias;
     }
 
 }

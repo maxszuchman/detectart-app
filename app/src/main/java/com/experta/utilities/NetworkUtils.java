@@ -23,7 +23,7 @@ public class NetworkUtils {
 
     public static final String LOGTAG = NetworkUtils.class.getSimpleName();
 
-    public static final String SERVER_BASE_URL = "https://still-shelf-00010.herokuapp.com/";
+    public static final String SERVER_BASE_URL = "https://still-shelf-00010.herokuapp.com";
     public static final String USERS = "/users/";
     public static final String DEVICES = "/devices";
     public static final String CONTACTS = "/contacts";
@@ -166,6 +166,8 @@ public class NetworkUtils {
 
         try {
             URL url = new URL(SERVER_BASE_URL + USERS + user.getId() + CONTACTS);
+
+            Log.i(LOGTAG, contact.jsonString());
 
             RequestBody body = RequestBody.create(MediaType.parse("application/json"), contact.jsonString());
 

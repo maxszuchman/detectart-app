@@ -2,12 +2,14 @@ package com.experta.services;
 
 public class NamesService {
 
+    private static final String EMPTY = " ";
+
     public String getFirstNameFromDisplayName(String displayName) {
 
-        if (displayName.isEmpty()) return "";
+        if (displayName.isEmpty()) return EMPTY;
 
         String[] names = displayName.trim().split(" ");
-        if (names.length == 1) return "";
+        if (names.length == 1) return EMPTY;
 
         String firstName = "";
 
@@ -24,7 +26,7 @@ public class NamesService {
 
     public String getLastNameFromDisplayName(String displayName) {
 
-        if (displayName.isEmpty()) return "";
+        if (displayName.isEmpty()) return EMPTY;
 
         String[] names = displayName.trim().split(" ");
         if (names.length == 1) return displayName;
