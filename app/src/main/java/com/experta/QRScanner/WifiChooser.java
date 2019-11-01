@@ -32,6 +32,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.experta.R;
 import com.experta.com.experta.model.Contact;
+import com.experta.ui.BottomNavActivity;
 import com.experta.ui.dialogs.AliasDialog;
 import com.experta.utilities.NetworkUtils;
 
@@ -48,6 +49,9 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class WifiChooser extends AppCompatActivity implements View.OnClickListener {
+
+    // El modelo está hardcodeado, el siguiente paso es tomarlo dinámicamente del dispositivo
+    private static final String DEVICE_MODEL = "NodeMCU";
 
     private final String LOGTAG = this.getClass().getSimpleName();
 
@@ -142,9 +146,12 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
                     deviceMacAddress = currentWifiInfo.getMacAddress();
 
                     sendData();
-                } else if (!deviceAttached && deviceMacAddress != null) {
 
-                    new AttachDeviceTask().execute(deviceMacAddress);
+                // Si hubo un cambio de conexión wifi y no es al dispositivo, suponemos que hubo una
+                // reconexión a Internet. Chequeamos que no se hayan mandado datos del dispositivo y enviamos
+                } else if (!deviceAttached && deviceMacAddress != null && deviceAlias != null) {
+
+                    new AttachDeviceTask().execute(deviceMacAddress, deviceAlias);
                 }
             }
         }
@@ -373,15 +380,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 
             Log.i(LOGTAG, "doInBackground");
 
-            try {
-                NetworkUtils.getContactListFromServer(params[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-
-                return false;
-            }
-
-            return true;
+            return NetworkUtils.addDeviceByUser(BottomNavActivity.user, params[0], params[1], DEVICE_MODEL);
         }
 
         @Override

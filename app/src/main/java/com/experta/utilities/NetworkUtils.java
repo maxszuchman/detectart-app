@@ -6,6 +6,7 @@ import com.experta.com.experta.model.Contact;
 import com.experta.com.experta.model.Device;
 import com.experta.com.experta.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,7 +31,8 @@ public class NetworkUtils {
 
     public static boolean createUser(User user) {
 
-        Response response;
+        boolean success = false;
+        Response response = null;
 
         try {
             URL url = new URL(SERVER_BASE_URL + USERS);
@@ -44,20 +46,20 @@ public class NetworkUtils {
 
         } catch (IOException e) {
             e.printStackTrace();
-
-            return false;
         }
 
         if (response != null && response.isSuccessful()) {
-            return true;
+            success = true;
         }
 
-        return false;
+        response.body().close();
+        return success;
     }
 
     public static boolean doesUserExist(String userEmail) {
 
-        Response response;
+        boolean success = false;
+        Response response = null;
 
         try {
             URL url = new URL(SERVER_BASE_URL + USERS + userEmail);
@@ -69,15 +71,14 @@ public class NetworkUtils {
 
         } catch (IOException e) {
             e.printStackTrace();
-
-            return false;
         }
 
         if (response != null && response.isSuccessful()) {
-            return true;
+            success = true;
         }
 
-        return false;
+        response.body().close();
+        return success;
     }
 
     private static String getDataFromServer(URL url) throws IOException {
@@ -162,7 +163,9 @@ public class NetworkUtils {
     }
 
     public static boolean addContactForUser(User user, Contact contact) {
-        Response response;
+
+        boolean success = false;
+        Response response = null;
 
         try {
             URL url = new URL(SERVER_BASE_URL + USERS + user.getId() + CONTACTS);
@@ -178,19 +181,20 @@ public class NetworkUtils {
 
         } catch (IOException e) {
             e.printStackTrace();
-
-            return false;
         }
 
         if (response != null && response.isSuccessful()) {
-            return true;
+            success = true;
         }
 
-        return false;
+        response.body().close();
+        return success;
     }
 
     public static boolean deleteContactByUser(User user, Contact contact) {
-        Response response;
+
+        boolean success = false;
+        Response response = null;
 
         try {
             URL url = new URL(SERVER_BASE_URL + USERS + user.getId() + CONTACTS + "/" + contact.getId());
@@ -204,14 +208,57 @@ public class NetworkUtils {
 
         } catch (IOException e) {
             e.printStackTrace();
-
-            return false;
         }
 
         if (response != null && response.isSuccessful()) {
-            return true;
+            success =  true;
         }
 
-        return false;
+        response.body().close();
+        return success;
+    }
+
+    public static boolean addDeviceByUser(User user, String deviceMacAddress, String deviceAlias, String deviceModel) {
+
+        boolean success = false;
+        Response response = null;
+
+        try {
+
+            URL url = new URL(SERVER_BASE_URL + USERS + user.getId() + DEVICES);
+
+            String json = createDeviceJson(deviceMacAddress, deviceAlias, deviceModel);
+            Log.i(LOGTAG, json);
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), json);
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).method("POST", body).build();
+
+            response = client.newCall(request).execute();
+
+        }  catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+        if (response != null && response.isSuccessful()) {
+            success = true;
+        }
+
+        response.body().close();
+        return success;
+    }
+
+    private static String createDeviceJson(String deviceMacAddress, String deviceAlias, String deviceModel)
+        throws IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode json = mapper.createObjectNode();
+        json.put("macAddress", deviceMacAddress);
+        json.put("alias", deviceAlias);
+        json.put("model", deviceModel);
+
+        return mapper.writeValueAsString(json);
     }
 }
