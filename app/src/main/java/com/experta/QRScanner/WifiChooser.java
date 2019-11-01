@@ -171,6 +171,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
         scanAvailableWiFiRouters();
 
         setContentView(R.layout.activity_wifi_chooser);
+        getSupportActionBar().setTitle(getString(R.string.red_para_dispositivo));
 
         sendButton = findViewById(R.id.send_data_button);
         sendButton.setOnClickListener(this);
@@ -288,6 +289,8 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
         wifiManager.disconnect();
         wifiManager.enableNetwork(netId, true);
         wifiManager.reconnect();
+
+        Log.i(LOGTAG, conf.SSID + " - " + conf.preSharedKey);
     }
 
     private void sendData() {

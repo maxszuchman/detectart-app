@@ -3,6 +3,7 @@
     package="com.experta">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -36,16 +37,6 @@
             android:name=".QRScanner.SimpleScannerActivity"
             android:theme="@style/AppOverlayTheme"></activity>
 
-        <activity
-            android:name="com.onegravity.contactpicker.core.ContactPickerActivity"
-            android:enabled="true"
-            android:exported="false" >
-
-            <intent-filter>
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

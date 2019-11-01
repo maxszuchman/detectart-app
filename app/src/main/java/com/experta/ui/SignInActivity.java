@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.experta.R;
+import com.experta.services.ToastService;
+import com.experta.utilities.NetworkUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -30,6 +32,8 @@ public class SignInActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_in);
 
+        checkForInternetConnection();
+
         new Handler().postDelayed(new Runnable() {
 
             @Override
@@ -44,6 +48,21 @@ public class SignInActivity extends Activity {
 
             }
         }, SPLASH_TIME_OUT);
+    }
+
+    private void checkForInternetConnection() {
+
+        if ( !NetworkUtils.isNetworkConnected(this) ) {
+            ToastService.toastBottom(this, getString(R.string.se_requiere_internet), Toast.LENGTH_LONG);
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    System.exit(0);
+                }
+            }, SPLASH_TIME_OUT - 500);
+        }
     }
 
     private void loadAndShowGoogleButton() {

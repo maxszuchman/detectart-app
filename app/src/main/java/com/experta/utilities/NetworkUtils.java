@@ -1,5 +1,8 @@
 package com.experta.utilities;
 
+import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.util.Log;
 
 import com.experta.com.experta.model.Contact;
@@ -11,6 +14,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -28,6 +32,22 @@ public class NetworkUtils {
     public static final String USERS = "/users/";
     public static final String DEVICES = "/devices";
     public static final String CONTACTS = "/contacts";
+
+    public static boolean isNetworkConnected(Activity activity) {
+        ConnectivityManager cm = (ConnectivityManager) activity.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
+
+    public static boolean isInternetAvailable() {
+        try {
+            InetAddress ipAddr = InetAddress.getByName("google.com");
+
+            return !ipAddr.equals("");
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     public static boolean createUser(User user) {
 
