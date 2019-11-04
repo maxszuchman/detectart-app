@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -16,7 +17,12 @@ import com.experta.com.experta.model.User;
 import com.experta.services.ToastService;
 import com.experta.utilities.NetworkUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 public class BottomNavActivity extends AppCompatActivity {
 
@@ -47,6 +53,24 @@ public class BottomNavActivity extends AppCompatActivity {
 
         CheckIfUserExistsCreateItOtherwise ciuecio = new CheckIfUserExistsCreateItOtherwise();
         ciuecio.execute(user);
+
+        //Se obtiene el token actualizado
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(LOGTAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        // Log and toast
+                        Log.i(LOGTAG, token);
+                    }
+                });
 
         ToastService.toast(this
                             , getString(R.string.bienvenidoa) + " " + (user.getFullName() == null || user.getFullName().isEmpty()? user.getId() : user.getFullName())

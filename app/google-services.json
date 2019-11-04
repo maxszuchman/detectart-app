@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1043359113966",
+    "firebase_url": "https://experta-c43ae.firebaseio.com",
+    "project_id": "experta-c43ae",
+    "storage_bucket": "experta-c43ae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1043359113966:android:8d00a3f224a531e5c9c9ff",
+        "android_client_info": {
+          "package_name": "com.experta"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1043359113966-4m7u0lhj1mourcnij7afpokqcjhj5a7t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXtChkVqHW0D02LEakxKiT9VmGYACvb_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1043359113966-4m7u0lhj1mourcnij7afpokqcjhj5a7t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

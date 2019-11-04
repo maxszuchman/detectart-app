@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 
 public class SignInActivity extends Activity {
 
@@ -33,6 +34,8 @@ public class SignInActivity extends Activity {
         setContentView(R.layout.activity_sign_in);
 
         checkForInternetConnection();
+
+        FirebaseApp.initializeApp(this);
 
         new Handler().postDelayed(new Runnable() {
 
