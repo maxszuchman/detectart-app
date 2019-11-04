@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
@@ -74,6 +75,38 @@ public class NetworkUtils {
 
         response.body().close();
         return success;
+    }
+
+    public static User getUserByEmail(String userEmail) {
+        User user = null;
+
+        try {
+            URL url = new URL(SERVER_BASE_URL + USERS + userEmail);
+            String json = getDataFromServer(url);
+            user = jsonStringAsUser(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
+    private static User jsonStringAsUser(String jsonString) {
+        if (jsonString == null || jsonString.isEmpty()) {
+            return new User();
+        }
+
+        User user = null;
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            user = mapper.readValue(jsonString, User.class);
+        } catch (IOException e) {
+            // JSON MALFORMADO
+            e.printStackTrace();
+        }
+
+        return user;
     }
 
     public static boolean doesUserExist(String userEmail) {

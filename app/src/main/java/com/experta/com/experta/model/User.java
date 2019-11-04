@@ -6,22 +6,38 @@ import java.io.IOException;
 
 public class User {
 
-    private String fullName, id, applicationToken;
+    private String createdAt, updatedAt, id, fullName, applicationToken;
 
     public User() {}
 
     public User(String id, String fullName, String applicationToken) {
-        this.fullName = fullName;
         this.id = id;
+        this.fullName = fullName;
         this.applicationToken = applicationToken;
     }
 
-    public String getFullName() {
-        return fullName;
+    public User(String createdAt, String updatedAt, String id, String fullName, String applicationToken) {
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.id = id;
+        this.fullName = fullName;
+        this.applicationToken = applicationToken;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(String updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public String getId() {
@@ -30,6 +46,14 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 
     public String getApplicationToken() {

@@ -49,31 +49,12 @@ public class BottomNavActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        populateUserData();
-
-        CheckIfUserExistsCreateItOtherwise ciuecio = new CheckIfUserExistsCreateItOtherwise();
-        ciuecio.execute(user);
-
-        //Se obtiene el token actualizado
-        FirebaseInstanceId.getInstance().getInstanceId()
-                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(LOGTAG, "getInstanceId failed", task.getException());
-                            return;
-                        }
-
-                        // Get new Instance ID token
-                        String token = task.getResult().getToken();
-
-                        // Log and toast
-                        Log.i(LOGTAG, token);
-                    }
-                });
+//        populateUserData();
 
         ToastService.toast(this
-                            , getString(R.string.bienvenidoa) + " " + (user.getFullName() == null || user.getFullName().isEmpty()? user.getId() : user.getFullName())
+                            , getString(R.string.bienvenidoa) + " "
+            + (user.getFullName() == null || user.getFullName().isEmpty()?
+                        user.getId() : user.getFullName())
                             , Toast.LENGTH_SHORT);
     }
 
@@ -83,44 +64,6 @@ public class BottomNavActivity extends AppCompatActivity {
 
         // TODO Tomar el token de Firebase y enviarlo
         user = new User(googleSignInAccount.getEmail(), googleSignInAccount.getDisplayName(), "");
-    }
-
-    public class CheckIfUserExistsCreateItOtherwise extends AsyncTask<User, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(User... params) {
-
-            Log.i(LOGTAG, "doInBackground");
-
-            if (!NetworkUtils.doesUserExist(user.getId())) {
-                Log.i(LOGTAG, "Inexistent user. Creating it...");
-
-                if (NetworkUtils.createUser(user)) {
-
-                    Log.i(LOGTAG, "User created.");
-                } else {
-
-                    Log.i(LOGTAG, "Unable to create user.");
-
-                    return false;
-                }
-
-            } else {
-                Log.i(LOGTAG, "Existent user.");
-            }
-
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Boolean couldCreateUser) {
-
-            if (!couldCreateUser) {
-                ToastService.toast(getApplicationContext(), getString(R.string.no_pudo_crear_usuario), Toast.LENGTH_LONG);
-            }
-
-        }
-
     }
 
 }
