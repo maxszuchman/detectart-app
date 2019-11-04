@@ -42,6 +42,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Call;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -68,6 +69,8 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 
     private List<String> ssids;
     private String selectedSSID = "";
+
+    private boolean connectingToDeviceSSID = false;
 
     // Recibe el escaneo de redes disponibles
     private final BroadcastReceiver mWifiScanReceiver = new BroadcastReceiver() {
@@ -131,27 +134,46 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 
             if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
 
-                WifiInfo currentWifiInfo = wifiManager.getConnectionInfo();
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 
-                // Chequeamos conexión al dispositivo y que se haya elegido una red wifi
-                if (currentWifiInfo.getSSID().contains(deviceSSID)
-                    && info.isConnected()
-                    && !TextUtils.isEmpty(selectedSSID)) {
+                // Si el cambio es por una nueva conexión a wifi
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
 
-                    toast(getString(R.string.conectando_al_dispositivo), Toast.LENGTH_SHORT);
-                    Log.i(LOGTAG, "Conectado al dispositivo");
+                    WifiInfo currentWifiInfo = wifiManager.getConnectionInfo();
 
-                    // Tomamos la mac del dispositivo para vincularla con un usuario en el servidor
-                    deviceMacAddress = currentWifiInfo.getMacAddress();
+                    // Chequeamos conexión al dispositivo y que se haya elegido una red wifi
+                    if (currentWifiInfo.getSSID().contains(deviceSSID)
+                            && info.isConnected()
+                            && !TextUtils.isEmpty(selectedSSID)) {
 
-                    sendData();
+                        //                    toast(getString(R.string.conectando_al_dispositivo), Toast.LENGTH_SHORT);
+                        connectingToDeviceSSID = false;
+                        Log.i(LOGTAG, "Conectado al dispositivo");
 
-                // Si hubo un cambio de conexión wifi y no es al dispositivo, suponemos que hubo una
-                // reconexión a Internet. Chequeamos que no se hayan mandado datos del dispositivo y enviamos
-                } else if (!deviceAttached && deviceMacAddress != null && deviceAlias != null) {
+                        // Tomamos la mac del dispositivo para vincularla con un usuario en el servidor
+                        deviceMacAddress = currentWifiInfo.getMacAddress();
 
-                    new AttachDeviceTask().execute(deviceMacAddress, deviceAlias);
+                        sendData();
+
+                        // Si hubo una reconexión a una red distinta de la del disp. mientras se estaba
+                        // intentando conectar al dispositivo, volvemos a probar
+                    } else if (connectingToDeviceSSID) {
+
+                        Log.i(LOGTAG, "Conectado a la red: " + currentWifiInfo.getSSID());
+                        Log.i(LOGTAG, "Network ID: " + currentWifiInfo.getNetworkId());
+                        Log.i(LOGTAG, "Mac Address: " + currentWifiInfo.getMacAddress());
+
+                        Log.i(LOGTAG, "Se conectó a una red distinta de la del dispositivo, reintentando...");
+                        connectToWifi(deviceSSID, devicePassword);
+                    }
+
+                    // Si hubo un cambio de conexión wifi y no es al dispositivo, suponemos que hubo una
+                    // reconexión a Internet. Chequeamos que no se hayan mandado datos del dispositivo y enviamos
+                    // a nuestro servidor
+                    else if (!deviceAttached && deviceMacAddress != null && deviceAlias != null) {
+
+                        new AttachDeviceTask().execute(deviceMacAddress, deviceAlias);
+                    }
                 }
             }
         }
@@ -275,6 +297,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
      */
     private void connectToWifi(final String networkSSID, final String networkPassword) {
 
+        connectingToDeviceSSID = true;
         toast(getString(R.string.conectando_al_dispositivo), Toast.LENGTH_LONG);
 
         if (!wifiManager.isWifiEnabled()) {
@@ -322,7 +345,6 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
         protected void onPreExecute() {
             super.onPreExecute();
 //            mLoadingIndicator.setVisibility(View.VISIBLE);
-            Log.i(LOGTAG, "onPreExecute()");
         }
 
         @Override
@@ -342,15 +364,30 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
                                          .url(url)
                                          .method("POST", body)
                                          .build();
+
+            Call call = client.newCall(request);
+            Response response = null;
+
             try {
-                Response response = client.newCall(request).execute();
+                response = call.execute();
 
                 if (response.isSuccessful()) {
                     return true;
                 }
 
             } catch (IOException e) {
+                e.printStackTrace();
 
+                Log.i(LOGTAG, "Request:");
+                Log.i(LOGTAG, request.toString());
+                Log.i(LOGTAG, request.body().toString());
+
+                if (response != null) {
+                    Log.i(LOGTAG, "Response:");
+                    Log.i(LOGTAG, response.message());
+                    Log.i(LOGTAG, response.headers().toString());
+                    Log.i(LOGTAG, response.body().toString());
+                }
             }
 
             return false;
@@ -362,6 +399,8 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 
             if (result) {
                 toast(getString(R.string.datos_enviados_correctamente), Toast.LENGTH_SHORT);
+            } else {
+                toast(getString(R.string.error_datos_al_disp), Toast.LENGTH_SHORT);
             }
             // COMPLETED (27) As soon as the loading is complete, hide the loading indicator
 //            mLoadingIndicator.setVisibility(View.INVISIBLE);

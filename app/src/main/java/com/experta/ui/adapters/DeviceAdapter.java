@@ -33,8 +33,10 @@ public class DeviceAdapter extends ArrayAdapter<Device> {
 
         if (devices[position].getGeneralStatus() == Status.ALARM) {
             lblStatus.setTextColor(Color.RED);
-        } else {
+        } else if (devices[position].getGeneralStatus() == Status.NORMAL){
             lblStatus.setTextColor(Color.BLUE);
+        } else if (devices[position].getGeneralStatus() == Status.INACTIVE){
+            lblStatus.setTextColor(Color.parseColor("#b7b814"));
         }
 
         return(item);

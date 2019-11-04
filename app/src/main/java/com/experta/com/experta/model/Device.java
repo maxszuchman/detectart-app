@@ -7,6 +7,7 @@ public class Device {
     private String macAddress;
     private String alias;
     private String model;
+    private String sensorDataUpdatedAt;
     private double latitude;
     private double longitude;
     private double accuracy;
@@ -23,12 +24,13 @@ public class Device {
         this.generalStatus = status;
     }
 
-    public Device(String createdAt, String updatedAt, String macAddress, String alias, String model, double latitude, double longitude, double accuracy, Status sensor1Status, Status sensor2Status, Status sensor3Status, Status generalStatus) {
+    public Device(String createdAt, String updatedAt, String macAddress, String alias, String model, String sensorDataUpdatedAt, double latitude, double longitude, double accuracy, Status sensor1Status, Status sensor2Status, Status sensor3Status, Status generalStatus) {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.macAddress = macAddress;
         this.alias = alias;
         this.model = model;
+        this.sensorDataUpdatedAt = sensorDataUpdatedAt;
         this.latitude = latitude;
         this.longitude = longitude;
         this.accuracy = accuracy;
@@ -76,6 +78,14 @@ public class Device {
 
     public void setModel(String model) {
         this.model = model;
+    }
+
+    public String getSensorDataUpdatedAt() {
+        return sensorDataUpdatedAt;
+    }
+
+    public void setSensorDataUpdatedAt(String sensorDataUpdatedAt) {
+        this.sensorDataUpdatedAt = sensorDataUpdatedAt;
     }
 
     public double getLatitude() {
