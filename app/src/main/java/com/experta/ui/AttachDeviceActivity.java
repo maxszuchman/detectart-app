@@ -166,6 +166,7 @@ public class AttachDeviceActivity extends AppCompatActivity {
 
                         // Tomamos la mac del dispositivo para vincularla con un usuario en el servidor
 //                        deviceMacAddress = currentWifiInfo.getMacAddress();
+                        // TODO Tomar la MAC de la red y no del nombre del SSID
                         deviceMacAddress = deviceSSID.substring(8);
 
                         Log.i(LOGTAG, "Conectado al dispositivo.");
