@@ -57,6 +57,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
     public static final String DEVICE_ALIAS = "DEVICE_ALIAS";
     public static final String AP_SSID = "AP_SSID";
     public static final String AP_PASSWORD = "AP_PASSWORD";
+    public static final String FORMER_AP_SSID = "FORMER_AP_SSID";
 
     private final String LOGTAG = this.getClass().getSimpleName();
 
@@ -68,6 +69,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
     private EditText passwordET;
 
     private String deviceSSID = "", devicePassword = "", deviceAlias = null;
+    private String formerApSSID = null;
 
     private List<String> ssids;
     private String selectedSSID = "";
@@ -165,10 +167,14 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
     }
 
     private void scanAvailableWiFiRouters() {
+        // Si no estaba el Wifi prendido, lo prendemos. Caso contrario nos guardamos la red para
+        // reconectar después del apareamiento
         if (!wifiManager.isWifiEnabled()) {
-            // If wifi disabled then enable it
+            // If wifi is disabled then enable it
             ToastService.toastCenter(getApplicationContext(), getString(R.string.habilitando_wifi), Toast.LENGTH_SHORT);
             wifiManager.setWifiEnabled(true);
+        } else {
+            formerApSSID = wifiManager.getConnectionInfo().getSSID();
         }
 
         // Escaneo de redes disponibles, sólo si no lo hizo antes
@@ -232,6 +238,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
         intent.putExtra(DEVICE_MODEL, DEVICE_MODEL);
         intent.putExtra(AP_SSID, selectedSSID);
         intent.putExtra(AP_PASSWORD, passwordET.getText().toString());
+        intent.putExtra(FORMER_AP_SSID, formerApSSID);
 
         startActivity(intent);
         finish();

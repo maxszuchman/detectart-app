@@ -64,7 +64,7 @@ public class SignInActivity extends Activity {
 
     private void checkForInternetConnection() {
 
-        if ( !NetworkUtils.isNetworkConnected(this) ) {
+        if ( !NetworkUtils.isInternetAvailable(this) ) {
             ToastService.toastBottom(this, getString(R.string.se_requiere_internet), Toast.LENGTH_LONG);
 
             new Handler().postDelayed(new Runnable() {

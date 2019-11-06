@@ -47,6 +47,7 @@ public class AttachDeviceActivity extends AppCompatActivity {
 
     private String deviceSSID, devicePassword, deviceAlias, deviceModel, deviceMacAddress;
     private String apSSID, apPassword;
+    private String formerApSSID = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,11 @@ public class AttachDeviceActivity extends AppCompatActivity {
         if (intent.hasExtra(WifiChooser.AP_PASSWORD)) {
             apPassword = intent.getStringExtra(WifiChooser.AP_PASSWORD);
         }
+
+        if (intent.hasExtra(WifiChooser.FORMER_AP_SSID)) {
+            formerApSSID = intent.getStringExtra(WifiChooser.FORMER_AP_SSID);
+        }
+
     }
 
     /**
@@ -159,7 +165,8 @@ public class AttachDeviceActivity extends AppCompatActivity {
                         connectingToDeviceSSID = false;
 
                         // Tomamos la mac del dispositivo para vincularla con un usuario en el servidor
-                        deviceMacAddress = currentWifiInfo.getBSSID();
+//                        deviceMacAddress = currentWifiInfo.getMacAddress();
+                        deviceMacAddress = deviceSSID.substring(8);
 
                         Log.i(LOGTAG, "Conectado al dispositivo.");
                         Log.i(LOGTAG, "Su MAC es: " + deviceMacAddress);
@@ -279,12 +286,24 @@ public class AttachDeviceActivity extends AppCompatActivity {
     }
 
     private void waitForInternetConnectionAndAttachDeviceToUser() {
-        wifiManager.disconnect();
 
         label.setText(R.string.esperando_internet);
 
-        waitForInternetConnection();
+        if (!wifiManager.isWifiEnabled()) {
+            wifiManager.setWifiEnabled(true);
+        }
+
+        WifiConfiguration conf = new WifiConfiguration();
+        conf.SSID = String.format("\"%s\"", formerApSSID);
+
+        int netId = wifiManager.addNetwork(conf);
+        wifiManager.disconnect();
+        wifiManager.enableNetwork(netId, true);
         wifiManager.reconnect();
+
+        Log.i(LOGTAG, "Intentando reconectar a red " + formerApSSID);
+
+        waitForInternetConnection();
     }
 
     private void waitForInternetConnection() {
