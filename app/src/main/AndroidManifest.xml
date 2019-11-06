@@ -2,26 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.experta">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
-
-<!--    PUSH NOTIFICATIONS                                                       -->
-    <!-- Recepción de notificación con la aplicación cerrada o en segundo plano   -->
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-    <!-- Canales de notificación DEFAULT -->
-    <meta-data android:name=
-        "com.google.firebase.messaging.default_notification_channel_id"
-        android:value="@string/default_notification_channel_id" />
-<!-- **************************************************************************  -->
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/icon"
@@ -30,31 +10,63 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".ui.SignInActivity">
+        <activity
+            android:name=".ui.SignInActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.BottomNavActivity"></activity>
-
-        <activity android:name=".QRScanner.WifiChooser"
-            android:windowSoftInputMode="stateHidden"
-            android:theme="@style/AppTheme">
-        </activity>
+        <activity
+            android:name=".ui.BottomNavActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
 
         <activity
-            android:name=".QRScanner.SimpleScannerActivity"
-            android:theme="@style/AppOverlayTheme"></activity>
+            android:name=".qrScanner.WifiChooser"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden"></activity>
+
+        <activity
+            android:name=".qrScanner.SimpleScannerActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppOverlayTheme" />
+
+        <activity android:name=".ui.AttachDeviceActivity"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait" />
 
         <service
-            android:name="com.experta.pushNotifications.MyFirebaseMessagingService"
+            android:name=".pushNotifications.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
     </application>
+
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_channel_id"
+        android:value="@string/default_notification_channel_id" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- PUSH NOTIFICATIONS -->
+    <!-- Recepción de notificación con la aplicación cerrada o en segundo plano -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_CONTACTS" /> <!-- Canales de notificación DEFAULT -->
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
 </manifest>

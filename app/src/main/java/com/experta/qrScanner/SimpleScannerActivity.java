@@ -1,4 +1,4 @@
-package com.experta.QRScanner;
+package com.experta.qrScanner;
 
 import android.Manifest;
 import android.content.Intent;
@@ -119,6 +119,7 @@ public class SimpleScannerActivity extends BaseScannerActivity implements ZXingS
         intent.putExtra(PWD_TAG, password);
 
         startActivity(intent);
+        finish();
     }
 
 }

@@ -3,6 +3,7 @@ package com.experta.utilities;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.experta.com.experta.model.Contact;
@@ -40,14 +41,25 @@ public class NetworkUtils {
         return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
     }
 
-    public static boolean isInternetAvailable() {
-        try {
-            InetAddress ipAddr = InetAddress.getByName("google.com");
+    public static boolean isInternetAvailable(Context ctx) {
 
-            return !ipAddr.equals("");
+        ConnectivityManager connectivityManager;
+        Context context = ctx.getApplicationContext();
+        boolean connected = false;
+
+        try {
+            connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            connected = networkInfo != null && networkInfo.isAvailable() &&
+                    networkInfo.isConnected();
+            return connected;
+
         } catch (Exception e) {
-            return false;
+            System.out.println("CheckConnectivity Exception: " + e.getMessage());
+            Log.v("connectivity", e.toString());
         }
+        return connected;
     }
 
     public static boolean createUser(User user) {
@@ -311,6 +323,9 @@ public class NetworkUtils {
         json.put("macAddress", deviceMacAddress);
         json.put("alias", deviceAlias);
         json.put("model", deviceModel);
+        json.put("latitude", 0.0);
+        json.put("longitude", 0.0);
+        json.put("accuracy", 0.0);
 
         return mapper.writeValueAsString(json);
     }

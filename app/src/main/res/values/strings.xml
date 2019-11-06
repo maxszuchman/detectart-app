@@ -1,24 +1,24 @@
 <resources>
-    <string name="app_name">DetectART</string>
+    <bool name="cameraPreviewShouldFillView">true</bool>
 
+    <string name="app_name">DetectART</string>
     <string name="splash_screen">DetectART</string>
     <string name="nav_contactos">Contactos</string>
     <string name="nav_dispositivos">Dispositivos</string>
     <string name="nav_logout">Cerrar sesión</string>
     <string name="navigation">Navigation</string>
-    <string name="add_dispositivo">Nuevo dispositivo</string>
 
+    <string name="add_dispositivo">Nuevo dispositivo</string>
     <string name="dialog_confirmacion">¿Confirma cerrar sesión?</string>
     <string name="dialog_ok">Confirmar</string>
-    <string name="dialog_cancel">Cancelar</string>
 
+    <string name="dialog_cancel">Cancelar</string>
     <string name="web_client_id">839866701860-3glummjo59vpo7344d3m2i08jq203l4o.apps.googleusercontent.com</string>
+
     <string name="bienvenidoa">Bienvenido/a</string>
 
-    <string name="default_notification_channel_id">10</string>
-
     <!--    QR SCANNER    -->
-    <bool name="cameraPreviewShouldFillView">true</bool>
+    <string name="default_notification_channel_id">10</string>
     <string name="enfoque_el_codigo_qr">Enfoque el código QR</string>
     <string name="codigo_qr_incorrecto">Codigo QR incorrecto.</string>
     <string name="password">Password</string>
@@ -46,4 +46,7 @@
     <string name="red_para_dispositivo">Red para el dispositivo</string>
     <string name="se_requiere_internet">Se requiere una conexión a Internet activa para correr ésta aplicación</string>
     <string name="error_datos_al_disp">Error enviando datos al dispositivo</string>
+    <string name="esperando_internet">Esperando por conexión a Internet...</string>
+    <string name="disp_apareado_correcto">Dispositivo apareado correctamente</string>
+    <string name="error_disp_apareado">Error apareando dispositivo, por favor intente nuevamente</string>
 </resources>

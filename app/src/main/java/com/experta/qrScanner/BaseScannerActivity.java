@@ -1,4 +1,4 @@
-package com.experta.QRScanner;
+package com.experta.qrScanner;
 
 import android.view.MenuItem;
 

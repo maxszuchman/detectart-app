@@ -17,7 +17,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.experta.QRScanner.SimpleScannerActivity;
+import com.experta.qrScanner.SimpleScannerActivity;
 import com.experta.R;
 import com.experta.com.experta.model.Device;
 import com.experta.services.ToastService;
