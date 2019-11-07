@@ -3,6 +3,7 @@ package com.experta.ui.dispositivos;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,12 +25,16 @@ import com.experta.services.ToastService;
 import com.experta.ui.BottomNavActivity;
 import com.experta.ui.adapters.DeviceAdapter;
 import com.experta.utilities.NetworkUtils;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.io.IOException;
 
 public class DispositivosFragment extends Fragment {
 
     public static final String LOGTAG = DispositivosFragment.class.getSimpleName();
+
+    private static final int HALF_MINUTE = 30000;
 
     private Device[] devices = new Device[] {};
     private DeviceAdapter adapter;
@@ -39,8 +44,7 @@ public class DispositivosFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_dispositivos, container, false);
         setHasOptionsMenu(true);
 
-        GetDevicesTask getDevicesTask = new GetDevicesTask();
-        getDevicesTask.execute(BottomNavActivity.user.getId());
+        getDevicesListEvery(HALF_MINUTE);
 
         adapter = new DeviceAdapter(getContext(), devices);
         lstDevices = root.findViewById(R.id.LstDevices);
@@ -55,6 +59,20 @@ public class DispositivosFragment extends Fragment {
         });
 
         return root;
+    }
+
+    private void getDevicesListEvery(final int time) {
+
+        GetDevicesTask getDevicesTask = new GetDevicesTask();
+        getDevicesTask.execute(BottomNavActivity.user.getId());
+
+        new Handler().postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                getDevicesListEvery(time);
+            }
+        }, time);
     }
 
     @Override
@@ -79,7 +97,7 @@ public class DispositivosFragment extends Fragment {
         @Override
         protected Device[] doInBackground(String... params) {
 
-            Log.i(LOGTAG, "doInBackground");
+            Log.i(LOGTAG, "GetDevicesTask - doInBackground");
 
             Device[] returnedDevices = null;
 
@@ -94,7 +112,7 @@ public class DispositivosFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Device[] devices) {
-            Log.i(LOGTAG, "onPostExecute");
+            Log.i(LOGTAG, "GetDevicesTask - onPostExecute");
 
             setDevices(devices);
         }

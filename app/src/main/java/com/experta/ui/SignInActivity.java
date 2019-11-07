@@ -30,7 +30,7 @@ import com.google.firebase.iid.InstanceIdResult;
 public class SignInActivity extends Activity {
 
     private static final String LOGTAG = "SignInActivity";
-    private static int SPLASH_TIME_OUT = 3000;
+    private static int SPLASH_TIME_OUT = 1000;
 
     private GoogleSignInClient googleSignInClient;
     private SignInButton googleSignInButton;
