@@ -12,6 +12,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -50,8 +51,8 @@ public class BottomNavActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bottom_nav_activity);
 
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         final BottomNavigationView navView = findViewById(R.id.nav_view);
 
         // Passing each menu ID as a set of Ids because each
@@ -90,8 +91,8 @@ public class BottomNavActivity extends AppCompatActivity {
 
         ToastService.toast(this
                             , getString(R.string.bienvenidoa) + " "
-            + (user.getFullName() == null || user.getFullName().isEmpty()?
-                        user.getId() : user.getFullName())
+                                + (user.getFullName() == null || user.getFullName().isEmpty()?
+                                    user.getId() : user.getFullName())
                             , Toast.LENGTH_SHORT);
     }
 
