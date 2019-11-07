@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -21,18 +20,18 @@ import androidx.fragment.app.Fragment;
 import com.experta.qrScanner.SimpleScannerActivity;
 import com.experta.R;
 import com.experta.com.experta.model.Device;
-import com.experta.services.ToastService;
 import com.experta.ui.BottomNavActivity;
+import com.experta.ui.DeviceInfoActivity;
 import com.experta.ui.adapters.DeviceAdapter;
 import com.experta.utilities.NetworkUtils;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.io.IOException;
 
 public class DispositivosFragment extends Fragment {
 
     public static final String LOGTAG = DispositivosFragment.class.getSimpleName();
+
+    public static final String DEVICE_EXTRA = "DEVICE_EXTRA";
 
     private static final int HALF_MINUTE = 30000;
 
@@ -53,8 +52,11 @@ public class DispositivosFragment extends Fragment {
 
             public void onItemClick(AdapterView<?> a, View v, int position, long id) {
 
-                String selectedOption = ((Device) a.getItemAtPosition(position)).getAlias();
-                ToastService.toast(getContext(), selectedOption, Toast.LENGTH_SHORT);
+                Device selectedDevice = (Device) a.getItemAtPosition(position);
+                Intent intent = new Intent(getContext(), DeviceInfoActivity.class);
+                intent.putExtra(DEVICE_EXTRA, selectedDevice);
+
+                startActivity(intent);
             }
         });
 

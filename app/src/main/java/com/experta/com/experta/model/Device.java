@@ -1,6 +1,8 @@
 package com.experta.com.experta.model;
 
-public class Device {
+import java.io.Serializable;
+
+public class Device implements Serializable {
 
     private String createdAt;
     private String updatedAt;
