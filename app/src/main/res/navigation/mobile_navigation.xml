@@ -16,9 +16,4 @@
         android:name="com.experta.ui.dispositivos.DispositivosFragment"
         android:label="@string/nav_dispositivos"
         tools:layout="@layout/fragment_dispositivos" />
-
-    <fragment
-        android:id="@+id/navigation_logout"
-        android:label="@string/nav_logout"
-        android:name="com.experta.ui.LogoutFragment"/>
 </navigation>
