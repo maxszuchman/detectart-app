@@ -24,7 +24,8 @@
         <activity
             android:name=".ui.BottomNavActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">/>
 
         <activity
             android:name=".qrScanner.WifiChooser"
