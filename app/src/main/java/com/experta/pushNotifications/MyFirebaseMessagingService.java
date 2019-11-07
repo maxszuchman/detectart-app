@@ -29,17 +29,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
             String titulo = remoteMessage.getNotification().getTitle();
             String texto = remoteMessage.getNotification().getBody();
+            String sound = remoteMessage.getNotification().getSound();
 
-            Log.d(LOGTAG, "NOTIFICACION RECIBIDA");
-            Log.d(LOGTAG, "Título: " + titulo);
-            Log.d(LOGTAG, "Texto: " + texto);
+            Log.i(LOGTAG, "NOTIFICACION RECIBIDA");
+            Log.i(LOGTAG, "Título: " + titulo);
+            Log.i(LOGTAG, "Texto: " + texto);
+            Log.i(LOGTAG, "Sonido: " + sound);
 
             //Opcional: mostramos la notificación en la barra de estado
-            showNotification(titulo, texto);
+            showNotification(titulo, texto, sound);
         }
     }
 
-    private void showNotification(String title, String text) {
+    private void showNotification(String title, String text, String sound) {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
@@ -61,7 +63,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //        notification.defaults = Notification.DEFAULT_ALL;
 
         // Sonido custom
-        notification.sound = Uri.parse("android.resource://" + getPackageName() + "/" +  R.raw.alarma);
+        int soundToPlay;
+
+        switch (sound) {
+            case "alarma":
+                soundToPlay = R.raw.alarma;
+                break;
+            case "ding":
+                soundToPlay = R.raw.ding;
+                break;
+            default:
+                soundToPlay = R.raw.alarma;
+        }
+
+        notification.sound = Uri.parse("android.resource://" + getPackageName() + "/" +  soundToPlay);
         notification.defaults |= Notification.DEFAULT_VIBRATE;
 
         notificationManager.notify(0, notification);
