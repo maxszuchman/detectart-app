@@ -1,17 +1,28 @@
 package com.experta.ui;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.experta.R;
 import com.experta.com.experta.model.Device;
 import com.experta.com.experta.model.Status;
+import com.experta.services.ToastService;
 import com.experta.ui.dispositivos.DispositivosFragment;
+import com.experta.utilities.NetworkUtils;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -30,6 +41,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
 
     private Device device;
     private GoogleMap map;
+    private Button reAttachDevice, deleteDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +55,34 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        reAttachDevice = findViewById(R.id.reAttachBtn);
+        deleteDevice = findViewById(R.id.deleteDeviceBtn);
+        deleteDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                areYouSureDialog();
+            }
+        });
+    }
+
+    private void areYouSureDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DeviceInfoActivity.this);
+        builder.setMessage(getString(R.string.esta_seguro))
+                .setPositiveButton(R.string.dialog_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // El usuario confirma cerrar sesión
+                        new DeleteDeviceTask().execute(device.getMacAddress());
+                    }
+                })
+                .setNegativeButton(R.string.dialog_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // El usuario cancela cerrar sesión (se mantiene el fragment anterior)
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 
     @Override
@@ -79,5 +119,37 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
 
+    }
+
+    public class DeleteDeviceTask extends AsyncTask<String, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            Log.i(LOGTAG, "AttachDeviceTask doInBackground");
+
+            return NetworkUtils.deleteDeviceByUserAndMac(BottomNavActivity.user, params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean devAttachedCorrectly) {
+            Log.i(LOGTAG, "AttachDeviceTask onPostExecute");
+
+            if (devAttachedCorrectly) {
+                ToastService.toastCenter(getApplicationContext(), getString(R.string.dispositivo_eliminado), Toast.LENGTH_SHORT);
+
+                // Esperamos y volvemos a la activity inicial
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, 1000);
+
+            } else {
+                ToastService.toastCenter(getApplicationContext(), getString(R.string.error_eliminando_dispositivo), Toast.LENGTH_SHORT);
+            }
+        }
     }
 }

@@ -39,6 +39,8 @@ public class DispositivosFragment extends Fragment {
     private DeviceAdapter adapter;
     private ListView lstDevices;
 
+    private GetDevicesTask getDevicesTask;
+
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_dispositivos, container, false);
         setHasOptionsMenu(true);
@@ -63,9 +65,21 @@ public class DispositivosFragment extends Fragment {
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getDevicesListEvery(HALF_MINUTE);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getDevicesTask.cancel(true);
+    }
+
     private void getDevicesListEvery(final int time) {
 
-        GetDevicesTask getDevicesTask = new GetDevicesTask();
+        getDevicesTask = new GetDevicesTask();
         getDevicesTask.execute(BottomNavActivity.user.getId());
 
         new Handler().postDelayed(new Runnable() {
@@ -123,12 +137,15 @@ public class DispositivosFragment extends Fragment {
     public void setDevices(Device[] devices) {
         this.devices = devices;
         Log.i(LOGTAG, "Devices: ");
-        for (Device device : devices) {
-            Log.i(LOGTAG, " " + device.toString());
-        }
 
-        // Lo hacemos asi porque porque adapter.notifyDataSetChanged() no anda
-        adapter = new DeviceAdapter(getContext(), devices != null? devices : new Device[]{});
-        lstDevices.setAdapter(adapter);
+        if (devices != null) {
+            for (Device device : devices) {
+                Log.i(LOGTAG, " " + device.toString());
+            }
+
+            // Lo hacemos asi porque porque adapter.notifyDataSetChanged() no anda
+            adapter = new DeviceAdapter(getContext(), devices != null? devices : new Device[]{});
+            lstDevices.setAdapter(adapter);
+        }
     }
 }

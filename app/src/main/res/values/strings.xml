@@ -49,4 +49,7 @@
     <string name="esperando_internet">Esperando por conexión a Internet...</string>
     <string name="disp_apareado_correcto">Dispositivo apareado correctamente</string>
     <string name="error_disp_apareado">Error apareando dispositivo, por favor intente nuevamente</string>
+    <string name="esta_seguro">¿Está seguro?</string>
+    <string name="dispositivo_eliminado">Dispositivo eliminado</string>
+    <string name="error_eliminando_dispositivo">Error eliminando dispositivo</string>
 </resources>

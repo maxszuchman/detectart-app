@@ -313,6 +313,33 @@ public class NetworkUtils {
         return success;
     }
 
+    public static boolean deleteDeviceByUserAndMac(User user, String deviceMacAddress) {
+
+        boolean success = false;
+        Response response = null;
+
+        try {
+
+            URL url = new URL(SERVER_BASE_URL + USERS + user.getId() + DEVICES + "/" + deviceMacAddress);
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).delete().build();
+
+            response = client.newCall(request).execute();
+
+        }  catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+        if (response != null && response.isSuccessful()) {
+            success = true;
+        }
+
+        response.body().close();
+        return success;
+    }
+
     private static String createDeviceJson(String deviceMacAddress, String deviceAlias, String deviceModel)
         throws IOException {
 
