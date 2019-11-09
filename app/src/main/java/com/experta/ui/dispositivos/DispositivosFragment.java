@@ -39,13 +39,12 @@ public class DispositivosFragment extends Fragment {
     private DeviceAdapter adapter;
     private ListView lstDevices;
 
+    private boolean keepGettingDevices;
     private GetDevicesTask getDevicesTask;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_dispositivos, container, false);
         setHasOptionsMenu(true);
-
-        getDevicesListEvery(HALF_MINUTE);
 
         adapter = new DeviceAdapter(getContext(), devices);
         lstDevices = root.findViewById(R.id.LstDevices);
@@ -68,27 +67,31 @@ public class DispositivosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        keepGettingDevices = true;
         getDevicesListEvery(HALF_MINUTE);
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onPause() {
+        super.onPause();
         getDevicesTask.cancel(true);
+        keepGettingDevices = false;
     }
 
     private void getDevicesListEvery(final int time) {
 
-        getDevicesTask = new GetDevicesTask();
-        getDevicesTask.execute(BottomNavActivity.user.getId());
+        if (keepGettingDevices) {
+            getDevicesTask = new GetDevicesTask();
+            getDevicesTask.execute(BottomNavActivity.user.getId());
 
-        new Handler().postDelayed(new Runnable() {
+            new Handler().postDelayed(new Runnable() {
 
-            @Override
-            public void run() {
-                getDevicesListEvery(time);
-            }
-        }, time);
+                @Override
+                public void run() {
+                    getDevicesListEvery(time);
+                }
+            }, time);
+        }
     }
 
     @Override
