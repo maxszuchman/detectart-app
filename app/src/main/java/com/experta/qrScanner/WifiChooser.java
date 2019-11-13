@@ -217,7 +217,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         final AliasDialog aliasDialog = new AliasDialog(this);
-        aliasDialog.show(fragmentManager, "tagAlerta");
+        aliasDialog.show(fragmentManager, "tagAlias");
     }
 
     public void setDeviceAlias(String deviceAlias) {

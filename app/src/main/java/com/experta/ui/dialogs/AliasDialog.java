@@ -1,5 +1,6 @@
 package com.experta.ui.dialogs;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -12,17 +13,19 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.experta.com.experta.model.Device;
 import com.experta.qrScanner.WifiChooser;
 import com.experta.R;
 import com.experta.services.ToastService;
+import com.experta.ui.DeviceInfoActivity;
 
 public class AliasDialog extends DialogFragment {
 
-    WifiChooser wifiChooser;
+    Activity activity;
 
-    public AliasDialog(WifiChooser wifiChooser) {
+    public AliasDialog(Activity activity) {
         super();
-        this.wifiChooser = wifiChooser;
+        this.activity = activity;
     }
 
     @Override
@@ -44,12 +47,21 @@ public class AliasDialog extends DialogFragment {
                            ToastService.toast(getContext(), getString(R.string.ingrese_alias), Toast.LENGTH_SHORT);
 
                            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                           new AliasDialog(wifiChooser).show(fragmentManager, "tagAlerta");
+                           new AliasDialog(activity).show(fragmentManager, "tagAlerta");
 
                        } else {
 
-                           wifiChooser.setDeviceAlias(aliasET.getText().toString());
-                           wifiChooser.sendConnectionDataToDevice();
+                           if (activity instanceof WifiChooser) {
+
+                               WifiChooser wifiChooser = (WifiChooser) activity;
+                               wifiChooser.setDeviceAlias(aliasET.getText().toString());
+                               wifiChooser.sendConnectionDataToDevice();
+                           } else if (activity instanceof DeviceInfoActivity) {
+
+                               DeviceInfoActivity deviceInfoActivity = (DeviceInfoActivity) activity;
+                               deviceInfoActivity.changeAlias(aliasET.getText().toString());
+                           }
+
                            dialog.cancel();
                        }
                     }

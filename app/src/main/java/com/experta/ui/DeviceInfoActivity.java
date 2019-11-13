@@ -19,6 +19,7 @@ import com.experta.R;
 import com.experta.com.experta.model.Device;
 import com.experta.com.experta.model.Status;
 import com.experta.services.ToastService;
+import com.experta.ui.dialogs.AliasDialog;
 import com.experta.ui.dispositivos.DispositivosFragment;
 import com.experta.utilities.NetworkUtils;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -41,7 +42,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
 
     private Device device;
     private GoogleMap map;
-    private Button reAttachDevice, deleteDevice;
+    private Button renameDevice, reattachDevice, deleteDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,15 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        reAttachDevice = findViewById(R.id.reAttachBtn);
+        renameDevice = findViewById(R.id.reNameBtn);
+        renameDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                renameDialog();
+            }
+        });
+        reattachDevice = findViewById(R.id.reAttachBtn);
         deleteDevice = findViewById(R.id.deleteDeviceBtn);
         deleteDevice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +74,12 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
                 areYouSureDialog();
             }
         });
+    }
+
+    private void renameDialog() {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        final AliasDialog aliasDialog = new AliasDialog(this);
+        aliasDialog.show(fragmentManager, "tagRename");
     }
 
     private void areYouSureDialog() {
@@ -121,19 +136,57 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
 
     }
 
+    public void changeAlias(String newAlias) {
+        Log.i(LOGTAG, "Changing alias of device " + device.getMacAddress() + " from " + device.getAlias() + " to " + newAlias);
+
+        device.setAlias(newAlias);
+        RenameDeviceTask renameDeviceTask = new RenameDeviceTask();
+        renameDeviceTask.execute(device);
+    }
+
+    public class RenameDeviceTask extends AsyncTask<Device, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Device... params) {
+            Log.i(LOGTAG, "RenameDeviceTask doInBackground");
+
+            return NetworkUtils.renameDeviceByUserAndMac(BottomNavActivity.user, params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean devRenamedCorrectly) {
+            Log.i(LOGTAG, "RenameDeviceTask onPostExecute");
+
+            if (devRenamedCorrectly) {
+                ToastService.toastCenter(getApplicationContext(), getString(R.string.dispositivo_renombrado), Toast.LENGTH_SHORT);
+
+                // Esperamos y volvemos a la activity inicial
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        finish();
+                    }
+                }, 1000);
+
+            } else {
+                ToastService.toastCenter(getApplicationContext(), getString(R.string.error_renombrando), Toast.LENGTH_SHORT);
+            }
+        }
+    }
+
     public class DeleteDeviceTask extends AsyncTask<String, Void, Boolean> {
 
         @Override
         protected Boolean doInBackground(String... params) {
-
-            Log.i(LOGTAG, "AttachDeviceTask doInBackground");
+            Log.i(LOGTAG, "DeleteDeviceTask doInBackground");
 
             return NetworkUtils.deleteDeviceByUserAndMac(BottomNavActivity.user, params[0]);
         }
 
         @Override
         protected void onPostExecute(Boolean devAttachedCorrectly) {
-            Log.i(LOGTAG, "AttachDeviceTask onPostExecute");
+            Log.i(LOGTAG, "DeleteDeviceTask onPostExecute");
 
             if (devAttachedCorrectly) {
                 ToastService.toastCenter(getApplicationContext(), getString(R.string.dispositivo_eliminado), Toast.LENGTH_SHORT);

@@ -52,4 +52,9 @@
     <string name="esta_seguro">¿Está seguro?</string>
     <string name="dispositivo_eliminado">Dispositivo eliminado</string>
     <string name="error_eliminando_dispositivo">Error eliminando dispositivo</string>
+    <string name="renombrar">Renombrar</string>
+    <string name="reaparear">Reaparear</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="dispositivo_renombrado">Dispositivo renombrado correctamente</string>
+    <string name="error_renombrando">Error renombrando dispositivo</string>
 </resources>

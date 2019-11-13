@@ -354,4 +354,53 @@ public class NetworkUtils {
 
         return mapper.writeValueAsString(json);
     }
+
+    private static String createDeviceJson(String deviceMacAddress, String deviceAlias, String deviceModel
+                                           , Double deviceLatitude, Double deviceLongitude, Double deviceAccuracy)
+            throws IOException {
+
+        ObjectMapper mapper = new ObjectMapper();
+        ObjectNode json = mapper.createObjectNode();
+        json.put("macAddress", deviceMacAddress);
+        json.put("alias", deviceAlias);
+        json.put("model", deviceModel);
+        json.put("latitude", deviceLatitude);
+        json.put("longitude", deviceLongitude);
+        json.put("accuracy", deviceAccuracy);
+
+        return mapper.writeValueAsString(json);
+    }
+    public static boolean renameDeviceByUserAndMac(User user, Device device) {
+
+
+        boolean success = false;
+        Response response = null;
+
+        try {
+
+            URL url = new URL(SERVER_BASE_URL + USERS + user.getId() + DEVICES + "/" + device.getMacAddress());
+
+            String json = createDeviceJson(device.getMacAddress(), device.getAlias(), device.getModel()
+                                           , device.getLatitude(), device.getLongitude(), device.getAccuracy());
+            Log.i(LOGTAG, json);
+
+            RequestBody body = RequestBody.create(MediaType.parse("application/json"), json);
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder().url(url).patch(body).build();
+
+            response = client.newCall(request).execute();
+
+        }  catch (IOException e) {
+
+            e.printStackTrace();
+        }
+
+        if (response != null && response.isSuccessful()) {
+            success = true;
+        }
+
+        response.body().close();
+        return success;
+    }
 }
