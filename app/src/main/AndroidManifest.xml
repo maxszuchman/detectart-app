@@ -29,7 +29,7 @@
             android:configChanges="orientation"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".qrScanner.SimpleScannerActivity"
             android:configChanges="orientation"
