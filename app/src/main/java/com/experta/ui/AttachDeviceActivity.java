@@ -17,10 +17,9 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.experta.R;
+import com.experta.qrScanner.SimpleScannerActivity;
 import com.experta.qrScanner.WifiChooser;
 import com.experta.utilities.NetworkUtils;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -42,8 +41,9 @@ public class AttachDeviceActivity extends AppCompatActivity {
     private WifiManager wifiManager;
 
     private boolean connectingToDeviceSSID = false;
+    private boolean vincularDispositivo;
     private boolean deviceAttached;
-    private boolean waitingForInternetConnection;
+    private boolean waitingForInternetConnectionToReturn;
 
     private String deviceSSID, devicePassword, deviceAlias, deviceModel, deviceMacAddress;
     private String apSSID, apPassword;
@@ -96,6 +96,9 @@ public class AttachDeviceActivity extends AppCompatActivity {
             formerApSSID = intent.getStringExtra(WifiChooser.FORMER_AP_SSID);
         }
 
+        if (intent.hasExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO)) {
+            vincularDispositivo = intent.getBooleanExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO, false);
+        }
     }
 
     /**
@@ -172,7 +175,7 @@ public class AttachDeviceActivity extends AppCompatActivity {
                         Log.i(LOGTAG, "Conectado al dispositivo.");
                         Log.i(LOGTAG, "Su MAC es: " + deviceMacAddress);
 
-                        unregisterReceiver(this);
+                        // unregisterReceiver(this);
 
                         // Pequeña espera para asentar la conexión
                         new Handler().postDelayed(new Runnable() {
@@ -184,6 +187,19 @@ public class AttachDeviceActivity extends AppCompatActivity {
                             }
                         }, 500);
 
+                    } else if (waitingForInternetConnectionToReturn && info.isConnected()) {
+
+                        Log.i(LOGTAG, "Volvió internet.");
+                        unregisterReceiver(this);
+                        // Si simplemente estabamos esperando Internet y se conectó, volvemos, pero esperamos antes
+                        new Handler().postDelayed(new Runnable() {
+
+                            @Override
+                            public void run() {
+
+                                finish();
+                            }
+                        }, 1000);
                     }
 //
 //                    // Si hubo una reconexión a una red distinta de la del disp. mientras se estaba
@@ -275,7 +291,12 @@ public class AttachDeviceActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
+                        if (!vincularDispositivo) {
+                            waitingForInternetConnectionToReturn = true;
+                        }
+
                         waitForInternetConnectionAndAttachDeviceToUser();
+
                     }
                 }, 500);
 
@@ -314,9 +335,11 @@ public class AttachDeviceActivity extends AppCompatActivity {
             @Override
             public void run() {
 
-                if (NetworkUtils.isInternetAvailable(getApplicationContext())) {
+                if (vincularDispositivo) {
+                    if (NetworkUtils.isInternetAvailable(getApplicationContext())) {
 
-                    new AttachDeviceTask().execute(deviceMacAddress, deviceAlias, deviceModel);
+                        new AttachDeviceTask().execute(deviceMacAddress, deviceAlias, deviceModel);
+                    }
                 } else {
 
                     waitForInternetConnection();

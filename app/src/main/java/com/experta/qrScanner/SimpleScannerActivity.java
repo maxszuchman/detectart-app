@@ -24,6 +24,9 @@ public class SimpleScannerActivity extends BaseScannerActivity implements ZXingS
     public static final String SSID_TAG = "SSID";
     public static final String PWD_TAG = "PWD";
 
+    public static final String VINCULAR_DISPOSITIVO = "VINCULAR_DISPOSITIVO";
+    private boolean vincularDispositivo;
+
     public static final int CAMERA_PERMISSION_CODE = 100;
 
     private ZXingScannerView mScannerView;
@@ -46,6 +49,11 @@ public class SimpleScannerActivity extends BaseScannerActivity implements ZXingS
             ActivityCompat.requestPermissions(this
                                               , new String[] { Manifest.permission.CAMERA }
                                               , CAMERA_PERMISSION_CODE);
+        }
+
+        Intent intent = getIntent();
+        if (intent.hasExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO)) {
+            vincularDispositivo = intent.getBooleanExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO, false);
         }
     }
 
@@ -117,6 +125,7 @@ public class SimpleScannerActivity extends BaseScannerActivity implements ZXingS
         Intent intent = new Intent(SimpleScannerActivity.this, WifiChooser.class);
         intent.putExtra(SSID_TAG, ssid);
         intent.putExtra(PWD_TAG, password);
+        intent.putExtra(VINCULAR_DISPOSITIVO, vincularDispositivo);
 
         startActivity(intent);
         finish();

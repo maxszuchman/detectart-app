@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.experta.R;
 import com.experta.com.experta.model.Device;
 import com.experta.com.experta.model.Status;
+import com.experta.qrScanner.SimpleScannerActivity;
 import com.experta.services.ToastService;
 import com.experta.ui.dialogs.AliasDialog;
 import com.experta.ui.dispositivos.DispositivosFragment;
@@ -66,6 +67,15 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
             }
         });
         reattachDevice = findViewById(R.id.reAttachBtn);
+        reattachDevice.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DeviceInfoActivity.this, SimpleScannerActivity.class);
+                intent.putExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO, false);
+                startActivity(intent);
+                finish();
+            }
+        });
         deleteDevice = findViewById(R.id.deleteDeviceBtn);
         deleteDevice.setOnClickListener(new View.OnClickListener() {
             @Override

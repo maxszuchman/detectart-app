@@ -105,6 +105,7 @@ public class DispositivosFragment extends Fragment {
 
         if (item.getItemId() == R.id.add_dispositivo) {
             Intent intent = new Intent(getContext(), SimpleScannerActivity.class);
+            intent.putExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO, true);
             startActivity(intent);
         }
 

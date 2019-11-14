@@ -61,6 +61,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 
     private final String LOGTAG = this.getClass().getSimpleName();
 
+    private boolean vincularDipositivo;
     private WifiManager wifiManager;
 
     private Button sendButton;
@@ -164,6 +165,10 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
         if (intent.hasExtra(SimpleScannerActivity.PWD_TAG)) {
             devicePassword = intent.getStringExtra(SimpleScannerActivity.PWD_TAG);
         }
+
+        if (intent.hasExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO)) {
+            vincularDipositivo = intent.getBooleanExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO, false);
+        }
     }
 
     private void scanAvailableWiFiRouters() {
@@ -215,9 +220,13 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
             return;
         }
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        final AliasDialog aliasDialog = new AliasDialog(this);
-        aliasDialog.show(fragmentManager, "tagAlias");
+        if (vincularDipositivo) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            final AliasDialog aliasDialog = new AliasDialog(this);
+            aliasDialog.show(fragmentManager, "tagAlias");
+        } else {
+            sendConnectionDataToDevice();
+        }
     }
 
     public void setDeviceAlias(String deviceAlias) {
@@ -239,6 +248,7 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
         intent.putExtra(AP_SSID, selectedSSID);
         intent.putExtra(AP_PASSWORD, passwordET.getText().toString());
         intent.putExtra(FORMER_AP_SSID, formerApSSID);
+        intent.putExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO, vincularDipositivo);
 
         startActivity(intent);
         finish();
