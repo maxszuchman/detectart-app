@@ -16,12 +16,23 @@
         android:layout_weight="70"/>
 
     <LinearLayout
+        android:id="@+id/button_panel"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="30"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:orientation="vertical">
+
+        <Button
+            android:id="@+id/recomendationsBtn"
+            android:textSize="17sp"
+            android:text="@string/recomendaciones_seguridad"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:layout_marginTop="7dp"
+            android:visibility="gone"/>
 
         <Button
             android:id="@+id/reNameBtn"

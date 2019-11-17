@@ -57,4 +57,5 @@
     <string name="eliminar">Eliminar</string>
     <string name="dispositivo_renombrado">Dispositivo renombrado correctamente</string>
     <string name="error_renombrando">Error renombrando dispositivo</string>
+    <string name="recomendaciones_seguridad">Recomendaciones de Seguridad</string>
 </resources>

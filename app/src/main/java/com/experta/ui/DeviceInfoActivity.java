@@ -2,6 +2,7 @@ package com.experta.ui;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 
@@ -13,18 +14,18 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.experta.R;
 import com.experta.com.experta.model.Device;
+import com.experta.com.experta.model.Sensor;
 import com.experta.com.experta.model.Status;
 import com.experta.qrScanner.SimpleScannerActivity;
 import com.experta.services.ToastService;
 import com.experta.ui.dialogs.AliasDialog;
 import com.experta.ui.dispositivos.DispositivosFragment;
 import com.experta.utilities.NetworkUtils;
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -35,6 +36,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     public final String LOGTAG = this.getClass().getSimpleName();
@@ -43,7 +46,7 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
 
     private Device device;
     private GoogleMap map;
-    private Button renameDevice, reattachDevice, deleteDevice;
+    private Button recomendations, renameDevice, reattachDevice, deleteDevice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +56,17 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
         Intent intent = getIntent();
         if (intent.hasExtra(DispositivosFragment.DEVICE_EXTRA)) {
             device = (Device) intent.getSerializableExtra(DispositivosFragment.DEVICE_EXTRA);
+        } else {
+            finish();
         }
 
         MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        initializeButtons();
+    }
+
+    private void initializeButtons() {
         renameDevice = findViewById(R.id.reNameBtn);
         renameDevice.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +93,48 @@ public class DeviceInfoActivity extends AppCompatActivity implements OnMapReadyC
                 areYouSureDialog();
             }
         });
+        recomendations = findViewById(R.id.recomendationsBtn);
+        if (device.getGeneralStatus() == Status.ALARM) {
+            showRecomendationsButton();
+        }
+    }
+
+    private void showRecomendationsButton() {
+        recomendations.setVisibility(View.VISIBLE);
+        recomendations.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showRecomendation(device.getAlarmSensors());
+            }
+        });
+
+        LinearLayout.LayoutParams renameLayoutParams = (LinearLayout.LayoutParams) renameDevice.getLayoutParams();
+        renameLayoutParams.setMargins(0, 2, 0, 0);
+        renameDevice.setLayoutParams(renameLayoutParams);
+        renameDevice.requestLayout();
+
+        View map = findViewById(R.id.map);
+        LinearLayout.LayoutParams mapLayoutParams = (LinearLayout.LayoutParams) map.getLayoutParams();
+        mapLayoutParams.weight = 60;
+        map.setLayoutParams(mapLayoutParams);
+        map.requestLayout();
+
+        LinearLayout buttonPanel = findViewById(R.id.button_panel);
+        LinearLayout.LayoutParams buttonPanelLayoutParams = (LinearLayout.LayoutParams) buttonPanel.getLayoutParams();
+        buttonPanelLayoutParams.weight = 60;
+        buttonPanel.setLayoutParams(buttonPanelLayoutParams);
+        buttonPanel.requestLayout();
+    }
+
+    private void showRecomendation(List<Sensor> sensorsInAlarm) {
+        // TODO Por ahora sólo muestra la recomendaciones de un sólo sensor, ver de tener también combinaciones, si aplica.
+        Intent intent = new Intent(DeviceInfoActivity.this, RecommendationActivity.class);
+        if (sensorsInAlarm.size() == 1) {
+            intent.putExtra(RecommendationActivity.RECOMMENDATION, sensorsInAlarm.get(0).getRecommendation());
+        }
+
+        startActivity(intent);
+        finish();
     }
 
     private void renameDialog() {

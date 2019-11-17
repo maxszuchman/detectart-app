@@ -1,6 +1,8 @@
 package com.experta.com.experta.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Device implements Serializable {
 
@@ -144,6 +146,16 @@ public class Device implements Serializable {
 
     public void setGeneralStatus(Status generalStatus) {
         this.generalStatus = generalStatus;
+    }
+
+    public List<Sensor> getAlarmSensors() {
+        List<Sensor> sensorsInAlarm = new ArrayList<>();
+
+        if (sensor1Status == Status.ALARM) sensorsInAlarm.add(Sensor.CO);
+        if (sensor2Status == Status.ALARM) sensorsInAlarm.add(Sensor.GAS);
+        if (sensor3Status == Status.ALARM) sensorsInAlarm.add(Sensor.SMOKE);
+
+        return sensorsInAlarm;
     }
 
     @Override
