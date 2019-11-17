@@ -52,23 +52,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void showNotification(String title, String text, String sound, String click_action) {
         Class<?> classToLaunch;
-        switch (click_action) {
-            case "com.experta.ui.COActivity":
-                classToLaunch = COActivity.class;
-                break;
-            case "com.experta.ui.GASActivity":
-                classToLaunch = GASActivity.class;
-                break;
-            case "com.experta.ui.SMOKEActivity":
-                classToLaunch = SMOKEActivity.class;
-                break;
-            default:
-                classToLaunch = RecommendationActivity.class;
+        PendingIntent pendingIntent = null;
+        if (click_action != null) {
+            switch (click_action) {
+                case "com.experta.ui.COActivity":
+                    classToLaunch = COActivity.class;
+                    break;
+                case "com.experta.ui.GASActivity":
+                    classToLaunch = GASActivity.class;
+                    break;
+                case "com.experta.ui.SMOKEActivity":
+                    classToLaunch = SMOKEActivity.class;
+                    break;
+                default:
+                    classToLaunch = null;
+            }
+            
+            Log.i(LOGTAG, "classToLaunch: " + classToLaunch.getSimpleName());
+            Intent intent = new Intent(getApplicationContext(), classToLaunch);
+            pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
         }
-
-        Log.i(LOGTAG, "classToLaunch: " + classToLaunch.getSimpleName());
-        Intent intent = new Intent(getApplicationContext(), classToLaunch);
-        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
@@ -90,10 +93,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Sonido custom
         int soundToPlay;
         switch (sound) {
-            case "alarma":
+            case "alarma.mp3":
                 soundToPlay = R.raw.alarma;
                 break;
-            case "ding":
+            case "ding.mp3":
                 soundToPlay = R.raw.ding;
                 break;
             default:
