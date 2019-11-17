@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ui.RecommendationActivity"></activity>
+        <activity android:name=".ui.COActivity"></activity>
+        <activity android:name=".ui.GASActivity"></activity>
+        <activity android:name=".ui.SMOKEActivity"></activity>
         <activity
             android:name=".ui.SignInActivity"
             android:configChanges="orientation"
