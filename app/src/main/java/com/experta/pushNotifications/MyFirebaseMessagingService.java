@@ -67,7 +67,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 default:
                     classToLaunch = null;
             }
-            
+
             Log.i(LOGTAG, "classToLaunch: " + classToLaunch.getSimpleName());
             Intent intent = new Intent(getApplicationContext(), classToLaunch);
             pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, intent, 0);
