@@ -43,6 +43,8 @@ public class NetworkUtils {
 
     public static boolean isInternetAvailable(Context ctx) {
 
+        Log.i(LOGTAG, "Checking for Internet availability.");
+
         ConnectivityManager connectivityManager;
         Context context = ctx.getApplicationContext();
         boolean connected = false;
@@ -300,16 +302,19 @@ public class NetworkUtils {
 
             response = client.newCall(request).execute();
 
-        }  catch (IOException e) {
+        }  catch (Exception e) {
 
             e.printStackTrace();
         }
 
-        if (response != null && response.isSuccessful()) {
-            success = true;
+        if (response != null) {
+            if (response.isSuccessful()) {
+                success = true;
+            }
+
+            response.body().close();
         }
 
-        response.body().close();
         return success;
     }
 

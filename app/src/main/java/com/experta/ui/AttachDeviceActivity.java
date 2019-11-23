@@ -40,10 +40,9 @@ public class AttachDeviceActivity extends AppCompatActivity {
 
     private WifiManager wifiManager;
 
-    private boolean connectingToDeviceSSID = false;
-    private boolean vincularDispositivo;
-    private boolean deviceAttached;
-    private boolean waitingForInternetConnectionToReturn;
+    private boolean connectingToDeviceSSID;
+    private boolean vinculateDevice;
+    private boolean waitingForInternetConnectionToReturn = false;
 
     private String deviceSSID, devicePassword, deviceAlias, deviceModel, deviceMacAddress;
     private String apSSID, apPassword;
@@ -62,6 +61,7 @@ public class AttachDeviceActivity extends AppCompatActivity {
         label = findViewById(R.id.stateTV);
 
         getIntents();
+        Log.i(LOGTAG, "Attach Device to User: " + vinculateDevice);
 
         connectToWifi(deviceSSID, devicePassword);
     }
@@ -97,7 +97,7 @@ public class AttachDeviceActivity extends AppCompatActivity {
         }
 
         if (intent.hasExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO)) {
-            vincularDispositivo = intent.getBooleanExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO, false);
+            vinculateDevice = intent.getBooleanExtra(SimpleScannerActivity.VINCULAR_DISPOSITIVO, false);
         }
     }
 
@@ -110,7 +110,7 @@ public class AttachDeviceActivity extends AppCompatActivity {
     private void connectToWifi(final String networkSSID, final String networkPassword) {
 
         connectingToDeviceSSID = true;
-        Log.i(LOGTAG, "Dispositivo SSID: " + networkSSID + " - Password: " + networkPassword);
+        Log.i(LOGTAG, "CONECTANDO A Dispositivo SSID: " + networkSSID + " - Password: " + networkPassword);
         label.setText(R.string.conectando_al_dispositivo);
 
         if (!wifiManager.isWifiEnabled()) {
@@ -152,12 +152,14 @@ public class AttachDeviceActivity extends AppCompatActivity {
 
             if (action.equals(WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
 
+                Log.i(LOGTAG, "CAMBIO EN EL ESTADO DE LA RED.");
                 NetworkInfo info = intent.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
 
                 // Si el cambio es por una nueva conexión a wifi
                 if (info.getState() == NetworkInfo.State.CONNECTED) {
 
                     WifiInfo currentWifiInfo = wifiManager.getConnectionInfo();
+                    Log.i(LOGTAG, "NUEVA CONEXIÓN A UNA RED: " + currentWifiInfo.getSSID());
 
                     // Chequeamos conexión al dispositivo
                     // connectingToDeviceSSID es un flag para mandar los datos al dispositivo
@@ -172,7 +174,7 @@ public class AttachDeviceActivity extends AppCompatActivity {
                         // TODO Tomar la MAC de la red y no del nombre del SSID
                         deviceMacAddress = deviceSSID.substring(8);
 
-                        Log.i(LOGTAG, "Conectado al dispositivo.");
+                        Log.i(LOGTAG, "CONECTADO AL DISPOSITIVO, RED: " + currentWifiInfo.getSSID());
                         Log.i(LOGTAG, "Su MAC es: " + deviceMacAddress);
 
                         // unregisterReceiver(this);
@@ -187,40 +189,33 @@ public class AttachDeviceActivity extends AppCompatActivity {
                             }
                         }, 500);
 
-                    } else if (waitingForInternetConnectionToReturn && info.isConnected()) {
+                    } else if (waitingForInternetConnectionToReturn
+                               && info.isConnected()
+                               && currentWifiInfo.getSSID().contains(formerApSSID)) {
 
                         Log.i(LOGTAG, "Volvió internet.");
                         unregisterReceiver(this);
+
                         // Si simplemente estabamos esperando Internet y se conectó, volvemos, pero esperamos antes
+                        // si no, mandamos el post al servidor para vincular el dispositivo al User
                         new Handler().postDelayed(new Runnable() {
 
                             @Override
                             public void run() {
 
-                                finish();
+                                if (NetworkUtils.isInternetAvailable(getApplicationContext())) {
+                                    if (vinculateDevice) {
+                                        new AttachDeviceTask().execute(deviceMacAddress, deviceAlias, deviceModel);
+                                    } else {
+                                        finish();
+                                    }
+                                } else {
+                                    waitForInternetConnection();
+                                }
+
                             }
-                        }, 1000);
+                        }, 5000);
                     }
-//
-//                    // Si hubo una reconexión a una red distinta de la del disp. mientras se estaba
-//                    // intentando conectar al dispositivo, volvemos a probar
-//                    } else if (connectingToDeviceSSID) {
-//
-//                        Log.i(LOGTAG, "Conectado a la red: " + currentWifiInfo.getSSID());
-//                        Log.i(LOGTAG, "Network ID: " + currentWifiInfo.getNetworkId());
-//                        Log.i(LOGTAG, "Mac Address: " + currentWifiInfo.getMacAddress());
-//
-//                        Log.i(LOGTAG, "Se conectó a una red distinta de la del dispositivo, reintentando...");
-//                        connectToWifi(deviceSSID, devicePassword);
-//                    }
-//
-//                    // Si hubo un cambio de conexión wifi y no es al dispositivo, suponemos que hubo una
-//                    // reconexión a Internet. Chequeamos que no se hayan mandado datos del dispositivo y enviamos
-//                    // a nuestro servidor
-//                    else if (!deviceAttached && deviceMacAddress != null && deviceAlias != null) {
-//
-//                        new AttachDeviceTask().execute(deviceMacAddress, deviceAlias);
-//                    }
                 }
             }
         }
@@ -235,7 +230,6 @@ public class AttachDeviceActivity extends AppCompatActivity {
 
         @Override
         protected Boolean doInBackground(URL... params) {
-            Log.i(LOGTAG, "SendDataToDeviceTask doInBackground() - Enviando datos al dispositivo.");
 
             URL url = params[0];
 
@@ -253,6 +247,9 @@ public class AttachDeviceActivity extends AppCompatActivity {
 
             Call call = client.newCall(request);
             Response response = null;
+
+            Log.i(LOGTAG, "SendDataToDeviceTask doInBackground() - ENVIANDO DATOS AL DISPOSITIVO.");
+            Log.i(LOGTAG, request.toString());
 
             try {
                 response = call.execute();
@@ -284,6 +281,7 @@ public class AttachDeviceActivity extends AppCompatActivity {
             Log.i(LOGTAG, "SendDataToDeviceTask onPostExecute()");
 
             if (result) {
+                Log.i(LOGTAG, "DATOS ENVIADOS AL DISPOSITIVO CORRECTAMENTE.");
                 label.setText(R.string.datos_enviados_correctamente);
 
                 new Handler().postDelayed(new Runnable() {
@@ -291,23 +289,21 @@ public class AttachDeviceActivity extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        if (!vincularDispositivo) {
-                            waitingForInternetConnectionToReturn = true;
-                        }
-
-                        waitForInternetConnectionAndAttachDeviceToUser();
+                        waitingForInternetConnectionToReturn = true;
+                        waitForInternetConnection();
 
                     }
                 }, 500);
 
             } else {
+                Log.i(LOGTAG, "ERROR ENVIANDO DATOS AL DISPOSITIVO.");
                 label.setText(R.string.error_datos_al_disp);
                 finish();
             }
         }
     }
 
-    private void waitForInternetConnectionAndAttachDeviceToUser() {
+    private void waitForInternetConnection() {
 
         label.setText(R.string.esperando_internet);
 
@@ -324,29 +320,6 @@ public class AttachDeviceActivity extends AppCompatActivity {
         wifiManager.reconnect();
 
         Log.i(LOGTAG, "Intentando reconectar a red " + formerApSSID);
-
-        waitForInternetConnection();
-    }
-
-    private void waitForInternetConnection() {
-
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-
-                if (vincularDispositivo) {
-                    if (NetworkUtils.isInternetAvailable(getApplicationContext())) {
-
-                        new AttachDeviceTask().execute(deviceMacAddress, deviceAlias, deviceModel);
-                    }
-                } else {
-
-                    waitForInternetConnection();
-                }
-            }
-        }, 500);
-
     }
 
     public class AttachDeviceTask extends AsyncTask<String, Void, Boolean> {
@@ -362,8 +335,6 @@ public class AttachDeviceActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Boolean devAttachedCorrectly) {
             Log.i(LOGTAG, "AttachDeviceTask onPostExecute");
-
-            deviceAttached = devAttachedCorrectly;
 
             if (devAttachedCorrectly) {
 
