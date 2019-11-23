@@ -31,22 +31,10 @@ import androidx.fragment.app.FragmentManager;
 import com.experta.R;
 import com.experta.services.ToastService;
 import com.experta.ui.AttachDeviceActivity;
-import com.experta.ui.BottomNavActivity;
 import com.experta.ui.dialogs.AliasDialog;
-import com.experta.utilities.NetworkUtils;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Call;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 public class WifiChooser extends AppCompatActivity implements View.OnClickListener {
 
@@ -212,11 +200,6 @@ public class WifiChooser extends AppCompatActivity implements View.OnClickListen
 
         if (TextUtils.isEmpty(selectedSSID)) {
             ToastService.toastTop(getApplicationContext(), getString(R.string.seleccione_red), Toast.LENGTH_SHORT);
-            return;
-        }
-
-        if (TextUtils.isEmpty(passwordET.getText().toString())) {
-            ToastService.toastTop(getApplicationContext(), getString(R.string.ingrese_contra), Toast.LENGTH_SHORT);
             return;
         }
 
